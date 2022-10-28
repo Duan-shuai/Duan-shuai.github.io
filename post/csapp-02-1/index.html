@@ -1,0 +1,403 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>【CSAPP-02】从源程序到进程（一） | 梦里飞雪飘</title>
+<link rel="shortcut icon" href="https://duan-shuai.github.io/favicon.ico?v=1666956401919">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://duan-shuai.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="【CSAPP-02】从源程序到进程（一） | 梦里飞雪飘 - Atom Feed" href="https://duan-shuai.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="
+
+前言
+一、编译
+1.编译原理
+2.汇编分析
+3. 机器级表示
+二、汇编
+
+1.汇编分析
+2.机器指令的执行细节
+
+
+三.链接
+
+1.链接分析
+
+
+
+
+
+前言
+内容分两篇完成
+（1）程序的编译，汇编，链接：知识包括编译原理，cpu指令集架..." />
+    <meta name="keywords" content="csapp" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://duan-shuai.github.io">
+  <img class="avatar" src="https://duan-shuai.github.io/images/avatar.png?v=1666956401919" alt="">
+  </a>
+  <h1 class="site-title">
+    梦里飞雪飘
+  </h1>
+  <p class="site-description">
+    coding......
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              【CSAPP-02】从源程序到进程（一）
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-08-12
+              </span>
+              <span>
+                6 min read
+              </span>
+              
+                <a href="https://duan-shuai.github.io/tag/3awnL_N9d/" class="post-tag">
+                  # csapp
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <!-- more -->
+<p><ul class="markdownIt-TOC">
+<li><a href="#%E5%89%8D%E8%A8%80">前言</a></li>
+<li><a href="#%E4%B8%80-%E7%BC%96%E8%AF%91">一、编译</a></li>
+<li><a href="#1%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86">1.编译原理</a></li>
+<li><a href="#2%E6%B1%87%E7%BC%96%E5%88%86%E6%9E%90">2.汇编分析</a></li>
+<li><a href="#3-%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA">3. 机器级表示</a></li>
+<li><a href="#%E4%BA%8C-%E6%B1%87%E7%BC%96">二、汇编</a>
+<ul>
+<li><a href="#1%E6%B1%87%E7%BC%96%E5%88%86%E6%9E%90">1.汇编分析</a></li>
+<li><a href="#2%E6%9C%BA%E5%99%A8%E6%8C%87%E4%BB%A4%E7%9A%84%E6%89%A7%E8%A1%8C%E7%BB%86%E8%8A%82">2.机器指令的执行细节</a></li>
+</ul>
+</li>
+<li><a href="#%E4%B8%89%E9%93%BE%E6%8E%A5">三.链接</a>
+<ul>
+<li><a href="#1%E9%93%BE%E6%8E%A5%E5%88%86%E6%9E%90">1.链接分析</a></li>
+</ul>
+</li>
+</ul>
+</p>
+<hr style=" border:solid; width:600px; height:1px;" color=#000000 size=1">
+<h1 id="前言">前言</h1>
+<p><font color=#999AAA >内容分两篇完成<br>
+（1）程序的编译，汇编，链接：知识包括编译原理，cpu指令集架构（Y86-64），链接。<br>
+（2）程序的加载，执行：知识包括操作系统（进程，虚拟内存，文件）</font></p>
+<hr style=" border:solid; width:600px; height:1px;" color=#000000 size=1">
+<h1 id="一-编译">一、编译</h1>
+<p>编译：将.c高级程序语言转化为.s汇编语言。</p>
+<h1 id="1编译原理">1.编译原理</h1>
+<p>【词法分析】<br>
+依照有限自动机的模型，将单词串与标识符对应<br>
+【语法分析】<br>
+使用“上下文无关文法”将符号表构成抽象语法树，选择合适的方法，如LR，LL方法进行分析<br>
+【语义分析】<br>
+将语法树与语义相对应，完成类型匹配，转化的工作<br>
+【中间代码生成】<br>
+将语法树使用顺序的三地址码形式表示<br>
+【目标代码生成】<br>
+对中间代码进行优化，翻译成汇编指令</p>
+<h1 id="2汇编分析">2.汇编分析</h1>
+<ul>
+<li>
+<p>指令：gcc -s hello.i -o hello.s</p>
+</li>
+<li>
+<p>内存段：</p>
+<p>【代码段（code segment）】<br>
+.text段：代码段，还保存只读的常量<br>
+【数据段（data segment）】<br>
+.data段：已初始化的全局变量，是静态内存分配<br>
+.rodata段：存放C中的字符串和#define定义的常量<br>
+.bss段：未初始化的全局变量，是静态内存分配<br>
+【栈stack】<br>
+程序运行时内存区，存放局部变量<br>
+【堆heap】<br>
+程序运行时动态分配的内存区</p>
+</li>
+</ul>
+<h1 id="3-机器级表示">3. 机器级表示</h1>
+<p>注：机器级编程需要考虑程序计数器PC，寄存器，状态码</p>
+<ul>
+<li>基础<br>
+【数据访问】<br>
+寄存器：%rsp（栈指针）<br>
+立即数：$Imm<br>
+内存引用：Imm(rb, ri, s)：M[ Imm + rb + ri*s]<br>
+【常用指令】<br>
+数据传送：mov<br>
+栈操作：push,  pop<br>
+地址操作：leap<br>
+算术运算：add, sub, mul<br>
+逻辑运算：and, xor, or</li>
+<li>控制<br>
+【条件码】<br>
+cmp S1, S2：不改变寄存器，重新设置条件码<br>
+set D<br>
+【跳转指令】<br>
+jmp：无条件跳转<br>
+jop：条件跳转</li>
+</ul>
+<pre><code class="language-cpp">//条件控制
+//存在不确定跳转，常用分支预测填满流水线，损失性能
+cmpq %rsi, %rdi
+  jge .L1
+  PROC2
+  ret
+.L1:
+  PROC1
+  ret
+//条件传送
+//可能存在计算错误
+movq %rsi, %rax
+subq %rdi, %rax  //y-x
+movq %rdi, %rdx
+subq %rsi, %rdx  //x-y
+cmpq %rsi, %rdi
+cmovge %rdx, %rax
+ret 
+</code></pre>
+<pre><code class="language-cpp">//循环：while, do while, for大同小异
+fact_while:
+  movl $1, %eax
+  jmp .JUDGE
+.L1:
+  imulq %rdi, %rax
+  subq $1, %rdi
+.JUDGE:
+  cmpq $1, %rdi
+  jg .L1
+  rep; ret
+</code></pre>
+<ul>
+<li>函数<br>
+栈帧：函数被调用时，创建定长的栈帧管理局部数据和转移控制。<br>
+<img src="https://img-blog.csdnimg.cn/8aedbe71e04542698a6de6302db2687f.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA5qKm6YeM6aOe6Zuq6aOY,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述" loading="lazy"></li>
+</ul>
+<pre><code class="language-cpp">//step1: 创建栈帧
+push %ebp            ; //基址指针rbp
+movl %esp, $ebp      ; 
+movl -12(%esp), %esp ; //分配栈帧空间
+</code></pre>
+<pre><code class="language-cpp">//step2：code
+//...
+//step3: 返回调用函数
+mov %ebp, %esp	  //返回调用函数的栈指针rsp
+pop %ebp          //弹栈
+ret               //返回rax
+</code></pre>
+<p>相关指令：call , ret</p>
+<ol>
+<li>数据：数组与结构体</li>
+</ol>
+<h1 id="二-汇编">二、汇编</h1>
+<p><font color=#999AAA >汇编：将.s汇编语言转化为二进制.o目标文件。</p>
+<h2 id="1汇编分析">1.汇编分析</h2>
+<ol>
+<li>
+<p>指令：as hello.s -o hello.o</p>
+</li>
+<li>
+<p>可重定位目标elf格式：readelf -a hello.o &gt; ./elf.txt<br>
+（1）ELF头（ELF header）：包含生成该目标文件的系统的字大小和字节顺序、ELF头的大小、目标文件类型、机器类型、节头部表的文件偏移，以及节头部表中条目的大小和数目。<br>
+（2）.text： 已编译程序的机器代码<br>
+（3）.rodata： 只读数据，比如跳转表等等<br>
+（4）.data： 保存已初始化的全局变量和静态变量（全局和局部）<br>
+（5）.bss： 保存未初始化的静态变量（全局和局部），以及被初始化为0的全局变量和静态变量（全局和局部）<br>
+（6）.symtab： 符号表，存放在程序中定义和引用的函数和变量的符号信息<br>
+注意：不包含局部非静态变量条目，因为该变量是由栈管理的<br>
+（7）.rel.text：.text节的重定位信息，可执行目标文件中需要修改的指令地址<br>
+（8）.rel.data： .data节的重定位信息，合并后的可执行目标文件中需要修改的指针数据的地址<br>
+（9）.debug：调试符号表，其条目是程序中定义的局部变量和类型定义，程序汇总定义和引用的全局变量，以及原始的C源文件<br>
+（10）.line： 原始C源程序中的行号和.text节中机器指令之间的映射<br>
+注意：只有以-g选项调用编译器驱动程序，才会出现.debug和.line<br>
+（11）.strtab： 字符串表，包括.symtab和.debug节中的符号表，以及节头部中的节名字<br>
+（12）节头部表（Section Header Table）：给出不同节的大小和位置等其他信息</p>
+</li>
+<li>
+<p>反汇编：objdump -d -r hello.o &gt; dump_hello.txt<br>
+（1）反汇编后数值为16进制，.s中为10进制<br>
+（2）跳转地址为重定位条目，.s中用L1等字段跳转</p>
+</li>
+</ol>
+<h2 id="2机器指令的执行细节">2.机器指令的执行细节</h2>
+<p>cpu采用流水线的方式分为五阶段执行：取值，译码，访存，写回，更新<br>
+详细内容参考：计算机组成原理与体系结构</p>
+<h1 id="三链接">三.链接</h1>
+<p><font color=#999AAA >链接：合并目标文件， 重定位 + 符号解析。</p>
+<h2 id="1链接分析">1.链接分析</h2>
+<ol>
+<li>
+<p>可执行ELF文件：<br>
+【对比】<br>
+目标elf: 地址为0，需要重定位，便于链接<br>
+可执行elf: 填充了虚拟地址，无重定位节，增添了库函数信息，便于进程装载<br>
+<img src="https://img-blog.csdnimg.cn/de2abc9485fd4f8a9dd97c8b707d7ebf.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA5qKm6YeM6aOe6Zuq6aOY,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述" loading="lazy"></p>
+</li>
+<li>
+<p>静态链接 和 动态链接<br>
+【静态链接】<br>
+链接器是一个独立程序，将一个或多个库或目标文件（先前由编译器或汇编器生成）链接到一块生成可执行程序。<br>
+这里的库指的是静态链接库，Windows下以.lib为后缀，Linux下以.a为后缀。<br>
+【动态链接】<br>
+链接过程推迟到运行时再进行，在可执行文件装载时或运行时，由操作系统的装载程序加载库。<br>
+这里的库指的是动态链接库，Windows下以.dll为后缀，Linux下以.so为后缀。<br>
+【对比】<br>
+静态链接可执行文件体积较大，包含相同的公共代码，造成浪费。<br>
+动态链接运行时依赖dll模块。</p>
+</li>
+<li>
+<p>静态链接步骤<br>
+（1）空间与地址的分配。扫描所有的目标文件，合并相似段，收集当中所有的符号信息。<br>
+（2）符号解析与重定位。调整代码位置。</p>
+</li>
+</ol>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E5%89%8D%E8%A8%80">前言</a></li>
+<li><a href="#%E4%B8%80-%E7%BC%96%E8%AF%91">一、编译</a></li>
+<li><a href="#1%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86">1.编译原理</a></li>
+<li><a href="#2%E6%B1%87%E7%BC%96%E5%88%86%E6%9E%90">2.汇编分析</a></li>
+<li><a href="#3-%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA">3. 机器级表示</a></li>
+<li><a href="#%E4%BA%8C-%E6%B1%87%E7%BC%96">二、汇编</a>
+<ul>
+<li><a href="#1%E6%B1%87%E7%BC%96%E5%88%86%E6%9E%90">1.汇编分析</a></li>
+<li><a href="#2%E6%9C%BA%E5%99%A8%E6%8C%87%E4%BB%A4%E7%9A%84%E6%89%A7%E8%A1%8C%E7%BB%86%E8%8A%82">2.机器指令的执行细节</a></li>
+</ul>
+</li>
+<li><a href="#%E4%B8%89%E9%93%BE%E6%8E%A5">三.链接</a>
+<ul>
+<li><a href="#1%E9%93%BE%E6%8E%A5%E5%88%86%E6%9E%90">1.链接分析</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://duan-shuai.github.io/post/csapp01/">
+              <h3 class="post-title">
+                【CSAPP-01】计算机系统漫游
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://duan-shuai.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

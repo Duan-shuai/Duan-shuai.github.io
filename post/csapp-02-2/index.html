@@ -1,0 +1,317 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>【CSAPP-02】从源程序到进程（二） | 梦里飞雪飘</title>
+<link rel="shortcut icon" href="https://duan-shuai.github.io/favicon.ico?v=1666956401919">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://duan-shuai.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="【CSAPP-02】从源程序到进程（二） | 梦里飞雪飘 - Atom Feed" href="https://duan-shuai.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="
+前言
+一、操作系统三个抽象
+
+进程
+虚拟内存
+
+
+二、加载执行
+
+
+
+前言
+
+前文已经介绍了源程序到进程的第一部分：编译，汇编，链接，本文介绍可执行文件的装载和执行，并探讨操作系统对进程的管理
+
+一、操作系统三个抽象
+简单介绍操作系统进程..." />
+    <meta name="keywords" content="csapp" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://duan-shuai.github.io">
+  <img class="avatar" src="https://duan-shuai.github.io/images/avatar.png?v=1666956401919" alt="">
+  </a>
+  <h1 class="site-title">
+    梦里飞雪飘
+  </h1>
+  <p class="site-description">
+    coding......
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              【CSAPP-02】从源程序到进程（二）
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-10-21
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+                <a href="https://duan-shuai.github.io/tag/3awnL_N9d/" class="post-tag">
+                  # csapp
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p><ul class="markdownIt-TOC">
+<li><a href="#%E5%89%8D%E8%A8%80">前言</a></li>
+<li><a href="#%E4%B8%80-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%B8%89%E4%B8%AA%E6%8A%BD%E8%B1%A1">一、操作系统三个抽象</a>
+<ul>
+<li><a href="#%E8%BF%9B%E7%A8%8B">进程</a></li>
+<li><a href="#%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98">虚拟内存</a></li>
+</ul>
+</li>
+<li><a href="#%E4%BA%8C-%E5%8A%A0%E8%BD%BD%E6%89%A7%E8%A1%8C">二、加载执行</a></li>
+</ul>
+</p>
+<hr style=" border:solid; width:600px; height:1px;" color=#000000 size=1">
+<h1 id="前言">前言</h1>
+<font color=#999AAA >
+前文已经介绍了源程序到进程的第一部分：编译，汇编，链接，本文介绍可执行文件的装载和执行，并探讨操作系统对进程的管理</font>
+<hr style=" border:solid; width:600px; height:1px;" color=#000000 size=1">
+<h1 id="一-操作系统三个抽象">一、操作系统三个抽象</h1>
+<p>简单介绍操作系统进程、虚拟内存、文件三大抽象，便于后续内容的理解</p>
+<h2 id="进程">进程</h2>
+<p>一个执行程序的实例，每个程序都运行在进程的上下文<br>
+抽象1：（处理器的逻辑控制流）时间分片，并发控制<br>
+抽象2：（内存系统）进程为每个程序提供了他自己的私有地址空间</p>
+<p>（1）内核模式和用户模式<br>
+<img src="https://img-blog.csdnimg.cn/6851801b46c849b2a19ef8829f65ca13.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA5qKm6YeM6aOe6Zuq6aOY,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述" loading="lazy"><br>
+（2）进程控制</p>
+<ol>
+<li>获取进程id：getpid()</li>
+<li>进程的创建：</li>
+</ol>
+<pre><code class="language-cpp">/*
+fork:
+1.子进程获得与父进程虚拟内存相同但独立的副本，且具有相同的文件描述符
+2.调用一次，返回两次，父进程返回子进程pid，子进程返回0 
+3.并发执行
+ */
+#include &lt;unistd.h&gt;
+#include &lt;sys/types.h&gt;
+pid_t fork(void);
+</code></pre>
+<ol start="3">
+<li>进程的执行：<br>
+<img src="https://img-blog.csdnimg.cn/201b90cd2a7f470b9313f408c975393a.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA5qKm6YeM6aOe6Zuq6aOY,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述" loading="lazy"></li>
+</ol>
+<pre><code class="language-cpp">/*
+execve:在当前进程上下文加载运行新程序 
+filename:可执行目标文件
+argv:参数列表
+envp:环境列表变量 
+
+加载到main：
+int main(int argc, char *argv[], char *envp[]);
+*/ 
+#include &lt;unistd.h&gt;
+int execve(const char *filename, const char *argv[], const char *envp[]); 
+</code></pre>
+<ol start="4">
+<li>等待进程</li>
+</ol>
+<pre><code class="language-cpp">//waitpid:
+#include &lt;sys/types.h&gt;
+#include &lt;sys/wait.h&gt;
+pid_t waitpid(pid_t pid, int *statusp, int options); 
+
+//wait
+#include &lt;sys/types.h&gt;
+#include &lt;sys/wait.h&gt;
+pid_t wait(int *statusp);
+</code></pre>
+<ol start="5">
+<li>进程休眠</li>
+</ol>
+<pre><code class="language-cpp">#include &lt;unistd.h&gt;
+unsigned int sleep(unsigned int secs);
+int pause(void);
+</code></pre>
+<ol start="6">
+<li>进程终止<br>
+<strong>正常终止</strong><br>
+return or exit<br>
+<strong>异常终止</strong><br>
+控制移交给操作系统，跳转到内核异常处理代码<br>
+<strong>僵死进程</strong><br>
+父进程调用wait等待子进程结束</li>
+</ol>
+<h2 id="虚拟内存">虚拟内存</h2>
+<p>组织为存放在<strong>磁盘</strong>上的N个连续字节单元的数组<br>
+特点1：物理内存是虚拟内存的缓存，进程不必全部加载到内存，节省空间<br>
+特点2：为进程提供独立私有空间，防止干扰</p>
+<figure data-type="image" tabindex="1"><img src="https://img-blog.csdnimg.cn/b66da9bad46c440c819a9b202289047e.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA5qKm6YeM6aOe6Zuq6aOY,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述" loading="lazy"></figure>
+<ol>
+<li>页表<br>
+<img src="https://img-blog.csdnimg.cn/e0fdee66252c4863927e9e2c52077fef.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA5qKm6YeM6aOe6Zuq6aOY,size_17,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述" loading="lazy"><br>
+页命中：从物理地址取出数据操作<br>
+页不命中：根据替换策略选择牺牲页，改写页表，先从虚拟内存加载到物理内存再访问</li>
+<li>地址翻译<br>
+<img src="https://img-blog.csdnimg.cn/1143bcaad6414a0abb04bfc25190c4c7.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA5qKm6YeM6aOe6Zuq6aOY,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述" loading="lazy"></li>
+<li>再看进程管理<br>
+fork：创建时共享虚拟内存，记为私有的写时复制<br>
+execve：加载器将代码、数据映射到私有区域，库函数映射到共享区域</li>
+</ol>
+<h1 id="二-加载执行">二、加载执行</h1>
+<p>将可执行目标文件加载到内存，构造虚拟内存映射，并跳转到程序入口点</p>
+<p>linux&gt; ./prog<br>
+<img src="https://img-blog.csdnimg.cn/000057b9bc4542ef977b2a122969831c.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA5qKm6YeM6aOe6Zuq6aOY,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述" loading="lazy"></p>
+<ol>
+<li>
+<p>流程<br>
+① 输入命令：$./hello<br>
+② shell命令行解释器构造argv和envp；<br>
+③ 调用fork()函数创建子进程，其地址空间与shell父进程完全相同，包括只读代码段、读写数据段、堆及用户栈等<br>
+④ 调用execve()函数在当前进程（新创建的子进程）的上下文中加载并运行hello程序。将hello中的.text节、.data节、.bss节等内容加载到当前进程的虚拟地址空间<br>
+⑤ 调用hello程序的main()函数，hello程序开始在一个进程的上下文中运行。</p>
+</li>
+<li>
+<p>execve加载细节<br>
+① 删除已存在的用户区域（自父进程独立）。<br>
+②映射私有区：为代码、数据、.bss和栈区域创建新的区域结构，所有这些区域都是私有的、写时才复制的。<br>
+③ 映射共享区：比如标准C库libc.so，映射到用户虚拟地址空间中的共享区域内。<br>
+④设置PC：设置当前进程的上下文中的程序计数器，使之指向代码区域的入口点。<br>
+⑤execve调用成功不会返回，只有当出现错误时，例如找不到需要执行的程序时，execve才会返回到调用程序。</p>
+</li>
+</ol>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E5%89%8D%E8%A8%80">前言</a></li>
+<li><a href="#%E4%B8%80-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%B8%89%E4%B8%AA%E6%8A%BD%E8%B1%A1">一、操作系统三个抽象</a>
+<ul>
+<li><a href="#%E8%BF%9B%E7%A8%8B">进程</a></li>
+<li><a href="#%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98">虚拟内存</a></li>
+</ul>
+</li>
+<li><a href="#%E4%BA%8C-%E5%8A%A0%E8%BD%BD%E6%89%A7%E8%A1%8C">二、加载执行</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://duan-shuai.github.io/post/csapp-02-1/">
+              <h3 class="post-title">
+                【CSAPP-02】从源程序到进程（一）
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://duan-shuai.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
