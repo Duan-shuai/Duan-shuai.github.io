@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://duan-shuai.github.io</id>
+    <title>梦里飞雪飘</title>
+    <updated>2022-11-20T14:11:36.110Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://duan-shuai.github.io"/>
+    <link rel="self" href="https://duan-shuai.github.io/atom.xml"/>
+    <subtitle>coding......</subtitle>
+    <logo>https://duan-shuai.github.io/images/avatar.png</logo>
+    <icon>https://duan-shuai.github.io/favicon.ico</icon>
+    <rights>All rights reserved 2022, 梦里飞雪飘</rights>
+    <entry>
+        <title type="html"><![CDATA[【Linux内核-02】引导（boot）与初始化（init）]]></title>
+        <id>https://duan-shuai.github.io/post/linux-nei-he-02/</id>
+        <link href="https://duan-shuai.github.io/post/linux-nei-he-02/">
+        </link>
+        <updated>2022-11-17T14:08:55.000Z</updated>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[【linux内核-01】 熟悉操作Linux 0.11内核]]></title>
+        <id>https://duan-shuai.github.io/post/linux-nei-he-01/</id>
+        <link href="https://duan-shuai.github.io/post/linux-nei-he-01/">
+        </link>
+        <updated>2022-11-01T15:06:02.000Z</updated>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[【操作系统-01】内存管理]]></title>
+        <id>https://duan-shuai.github.io/post/cao-zuo-xi-tong-01-nei-cun-guan-li/</id>
+        <link href="https://duan-shuai.github.io/post/cao-zuo-xi-tong-01-nei-cun-guan-li/">
+        </link>
+        <updated>2022-06-01T15:13:31.000Z</updated>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[【cpp进阶-02】谈谈c++11新特性（1）]]></title>
+        <id>https://duan-shuai.github.io/post/cpp-jin-jie-02/</id>
+        <link href="https://duan-shuai.github.io/post/cpp-jin-jie-02/">
+        </link>
+        <updated>2022-02-24T10:42:53.000Z</updated>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[【cpp进阶-01】谈谈多态问题]]></title>
+        <id>https://duan-shuai.github.io/post/cpp-jin-jie-01/</id>
+        <link href="https://duan-shuai.github.io/post/cpp-jin-jie-01/">
+        </link>
+        <updated>2022-02-11T14:09:05.000Z</updated>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[【cpp基础篇-03】网络编程]]></title>
+        <id>https://duan-shuai.github.io/post/cpp-ji-chu-pian-03-wang-luo-bian-cheng/</id>
+        <link href="https://duan-shuai.github.io/post/cpp-ji-chu-pian-03-wang-luo-bian-cheng/">
+        </link>
+        <updated>2022-01-31T11:59:14.000Z</updated>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[【cpp基础篇-02】内存管理]]></title>
+        <id>https://duan-shuai.github.io/post/cpp-02/</id>
+        <link href="https://duan-shuai.github.io/post/cpp-02/">
+        </link>
+        <updated>2022-01-08T11:56:59.000Z</updated>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[【cpp基础篇-01】面向对象]]></title>
+        <id>https://duan-shuai.github.io/post/cpp-ji-chu-pian-01/</id>
+        <link href="https://duan-shuai.github.io/post/cpp-ji-chu-pian-01/">
+        </link>
+        <updated>2021-12-16T11:51:55.000Z</updated>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[【CSAPP-02】从源程序到进程（二）]]></title>
+        <id>https://duan-shuai.github.io/post/csapp-02-2/</id>
+        <link href="https://duan-shuai.github.io/post/csapp-02-2/">
+        </link>
+        <updated>2021-10-21T11:20:19.000Z</updated>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[【CSAPP-02】从源程序到进程（一）]]></title>
+        <id>https://duan-shuai.github.io/post/csapp-02-1/</id>
+        <link href="https://duan-shuai.github.io/post/csapp-02-1/">
+        </link>
+        <updated>2021-08-12T11:08:14.000Z</updated>
+    </entry>
+</feed>
