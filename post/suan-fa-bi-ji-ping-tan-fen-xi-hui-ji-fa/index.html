@@ -1,0 +1,208 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>【算法笔记】平摊分析--会计法 | 梦里飞雪飘</title>
+<link rel="shortcut icon" href="https://duan-shuai.github.io/favicon.ico?v=1677047621874">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://duan-shuai.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="【算法笔记】平摊分析--会计法 | 梦里飞雪飘 - Atom Feed" href="https://duan-shuai.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="会计法介绍
+为每个操作类型分配一个平摊代价，保证在整个操作序列中平摊代价始终大于实际代价
+设计思路：
+需要结合数据结构的特点和算法的规律灵活设计
+【栈操作】
+
+问题定义：初始为空的栈进行push，pop，multipop操作的代价分析
+设计..." />
+    <meta name="keywords" content="算法" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://duan-shuai.github.io">
+  <img class="avatar" src="https://duan-shuai.github.io/images/avatar.png?v=1677047621874" alt="">
+  </a>
+  <h1 class="site-title">
+    梦里飞雪飘
+  </h1>
+  <p class="site-description">
+    coding......
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              【算法笔记】平摊分析--会计法
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-04-19
+              </span>
+              <span>
+                1 min read
+              </span>
+              
+                <a href="https://duan-shuai.github.io/tag/96Bx5rGp4/" class="post-tag">
+                  # 算法
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <h1 id="会计法介绍">会计法介绍</h1>
+<p>为每个操作类型分配一个平摊代价，保证在整个操作序列中平摊代价始终大于实际代价</p>
+<p>设计思路：</p>
+<p>需要结合<strong>数据结构的特点</strong>和<strong>算法的规律</strong>灵活设计</p>
+<p><strong>【栈操作】</strong></p>
+<ul>
+<li>问题定义：初始为空的栈进行push，pop，multipop操作的代价分析</li>
+<li>设计思路：</li>
+</ul>
+<p>由操作的代价规律 : push &gt;= pop+multipop</p>
+<p>则 2*push的代价 &gt; 总代价</p>
+<ul>
+<li>分析：</li>
+</ul>
+<p>实际代价</p>
+<figure data-type="image" tabindex="1"><img src="https://img2020.cnblogs.com/blog/2071899/202006/2071899-20200621152538007-1320277706.png" alt="img" loading="lazy"></figure>
+<p>平摊代价</p>
+<p>​        <img src="https://img2020.cnblogs.com/blog/2071899/202006/2071899-20200621152616752-1467351885.png" alt="img" loading="lazy"></p>
+<p>设计的平摊代价满足会计法的要求，则总代价O（2n），平摊代价O(2)</p>
+<p><strong>【二进制计数器】</strong></p>
+<ul>
+<li>问题定义：初始为0的k位二进制计数器代价分析</li>
+<li>设计思路：</li>
+</ul>
+<p>对于任何一个数位，0 ~&gt; 1 的次数总大于等于 1~&gt;0 的次数</p>
+<ul>
+<li>分析：</li>
+</ul>
+<p>设 0 <sub>&gt;1的平摊代价为2，1</sub>&gt;0的平摊代价为0</p>
+<p>设计的平摊代价满足会计法的要求，则总代价O（2n），平摊代价O（2）</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E4%BC%9A%E8%AE%A1%E6%B3%95%E4%BB%8B%E7%BB%8D">会计法介绍</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://duan-shuai.github.io/post/suan-fa-bi-ji-ping-tan-fen-xi-ju-ji-fa/">
+              <h3 class="post-title">
+                【算法笔记】平摊分析--聚集法
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://duan-shuai.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

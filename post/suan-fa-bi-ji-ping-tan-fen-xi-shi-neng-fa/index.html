@@ -1,0 +1,240 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>【算法笔记】平摊分析--势能法 | 梦里飞雪飘</title>
+<link rel="shortcut icon" href="https://duan-shuai.github.io/favicon.ico?v=1677047621874">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://duan-shuai.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="【算法笔记】平摊分析--势能法 | 梦里飞雪飘 - Atom Feed" href="https://duan-shuai.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="势能法介绍
+平摊分析中最常用的方法
+根据整个数据结构的特点设计势函数，保证初始势函数为0，整个操作序列中势函数&gt;=0（这个特点保证了平摊代价始终大于实际代价）
+对每个操作类：平摊代价 = 实际代价 + 势差
+对整体操作序列：总代价 =..." />
+    <meta name="keywords" content="算法" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://duan-shuai.github.io">
+  <img class="avatar" src="https://duan-shuai.github.io/images/avatar.png?v=1677047621874" alt="">
+  </a>
+  <h1 class="site-title">
+    梦里飞雪飘
+  </h1>
+  <p class="site-description">
+    coding......
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              【算法笔记】平摊分析--势能法
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-04-19
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+                <a href="https://duan-shuai.github.io/tag/96Bx5rGp4/" class="post-tag">
+                  # 算法
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <h2 id="势能法介绍">势能法介绍</h2>
+<p>平摊分析中最常用的方法</p>
+<p>根据整个数据结构的特点设计势函数，保证初始势函数为0，整个操作序列中势函数&gt;=0（这个特点保证了平摊代价始终大于实际代价）</p>
+<p><strong>对每个操作类：平摊代价 = 实际代价 + 势差</strong></p>
+<p><strong>对整体操作序列：总代价 = 总平摊代价 - 势差</strong></p>
+<p>势函数的设计特点：</p>
+<ul>
+<li>每次操作对 数据结构 造成改变的部分(实际代价越大，改变越大)</li>
+<li>每次进行大代价操作后，势函数降低</li>
+<li>每次进行大代价操作前，势函数达到峰值</li>
+</ul>
+<p>【栈操作】</p>
+<ul>
+<li>问题定义：初始为空的栈上进行push，pop，multipop操作的代价分析</li>
+<li>设计：</li>
+</ul>
+<p>设计势函数为：栈中元素的个数</p>
+<figure data-type="image" tabindex="1"><img src="https://img2020.cnblogs.com/blog/2071899/202006/2071899-20200621154949149-781725626.png" alt="img" loading="lazy"></figure>
+<p>【二进制计数器】</p>
+<ul>
+<li>问题定义：初始为0 的k位二进制计数器</li>
+<li>设计</li>
+</ul>
+<p>设计势函数为：计数器中1的个数</p>
+<p>（1）设第 i 次操作将 t 位置0 ， 将 1 位置1</p>
+<p>实际代价：t+1</p>
+<p>势差：1-t</p>
+<p>平摊代价：2</p>
+<p>【拓展】初始不为0的二进制计数器（从k计数到n+k）</p>
+<p>方法：根据势能关系：<strong>总平摊代价 - 总实际代价 = 势差</strong></p>
+<p>总代价 = 初始为0的总代价 - （φn - φ0）= 2n - （φn - φ0）</p>
+<p>【动态表】</p>
+<ul>
+<li>问题定义：初始为空的动态表进行 插入、删除两种操作</li>
+</ul>
+<p>若表满，则将原表扩张一倍</p>
+<p>若表的装载因子不足1/4时，则将原表收缩一半</p>
+<ul>
+<li>使用聚集法 和 会计法 将不再赘述，在进行平摊分析时，我们优先使用势能法</li>
+<li>势函数设计：</li>
+</ul>
+<p>动态表的装载因子a始终在 [1/4，1] 之间，大代价操作前，装载因子a<mark>1/4 或 1，大代价操作后，装载因子a</mark>1/2</p>
+<p>即1/4 和 1时势函数最大，1/2时势函数最小</p>
+<p>综上，设计势函数：| a-1/2 | ~&gt; | 2*num - size |</p>
+<p>​                  <img src="https://img2020.cnblogs.com/blog/2071899/202006/2071899-20200621163215467-508884071.png" alt="img" loading="lazy"></p>
+<ul>
+<li>分析：</li>
+</ul>
+<p>（1）第 i 次插入操作发生扩张（m - 2m）</p>
+<p>实际代价：m+1</p>
+<p>势差：2-m</p>
+<p>平摊代价 = 3</p>
+<p>（2）第 i 次插入操作未扩张</p>
+<p>平摊代价 = 3</p>
+<p>（3）第 i 次删除操作发生收缩（2m - m）</p>
+<p>实际代价：m+1</p>
+<p>势差：2 - m</p>
+<p>平摊代价 = 3</p>
+<p>（4）第 i 次删除操作未收缩</p>
+<p>平摊代价 = 3</p>
+<p>总代价：3n</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E5%8A%BF%E8%83%BD%E6%B3%95%E4%BB%8B%E7%BB%8D">势能法介绍</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://duan-shuai.github.io/post/suan-fa-bi-ji-ping-tan-fen-xi-hui-ji-fa/">
+              <h3 class="post-title">
+                【算法笔记】平摊分析--会计法
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://duan-shuai.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

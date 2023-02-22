@@ -1,0 +1,256 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>软件构造-02 | 梦里飞雪飘</title>
+<link rel="shortcut icon" href="https://duan-shuai.github.io/favicon.ico?v=1677047621874">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://duan-shuai.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="软件构造-02 | 梦里飞雪飘 - Atom Feed" href="https://duan-shuai.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="（一）数据类型与类型检查
+基本数据类型：有值无ID，栈
+抽象数据类型：有值和ID，堆
+静态类型检查：类型检查
+动态类型检查：值的检查（空指针引用，越界访问、整数除0）
+不检查但会出现错误结果（避免）：（浮点数除0、整数溢出）
+（二）immu..." />
+    <meta name="keywords" content="软件构造" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://duan-shuai.github.io">
+  <img class="avatar" src="https://duan-shuai.github.io/images/avatar.png?v=1677047621874" alt="">
+  </a>
+  <h1 class="site-title">
+    梦里飞雪飘
+  </h1>
+  <p class="site-description">
+    coding......
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              软件构造-02
+            </h2>
+            <div class="post-info">
+              <span>
+                2020-10-30
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+                <a href="https://duan-shuai.github.io/tag/0OyKTXzWK/" class="post-tag">
+                  # 软件构造
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>（一）数据类型与类型检查<br>
+基本数据类型：有值无ID，栈<br>
+抽象数据类型：有值和ID，堆<br>
+静态类型检查：类型检查<br>
+动态类型检查：值的检查（空指针引用，越界访问、整数除0）<br>
+不检查但会出现错误结果（避免）：（浮点数除0、整数溢出）<br>
+（二）immutable 与 mutable<br>
+不可变数据类型：内部无mutator，每次改变都会产生新的副本<br>
+可变数据类型：内部有mutator，可以改变类的值<br>
+final的使用:</p>
+<p>final表明了程序员的一种“设计决策”<br>
+final类无法派生子类<br>
+final变量无法改变值/引用</p>
+<p>immutable变量被final修饰后无法改变<br>
+                   mutable变量被final修饰后引用不可改变</p>
+<p>final方法无法被子类重写</p>
+<p>集合类的使用：</p>
+<p>集合类均为mutable变量，可以包装为UnmodifiableCollections作为immutable类型<br>
+mutable存在多引用时修改容易出现风险</p>
+<p>（三）画snapshot图<br>
+（四）设计规约</p>
+<ol>
+<li>前置条件与后置条件：<br>
+前置条件满足了，后置条件必须满足；</li>
+</ol>
+<p>前置条件不满足，后置条件不一定满足（输入错误，可以抛出异常）</p>
+<ol start="2">
+<li>规约的书写：</li>
+</ol>
+<p>作为方法的注释书<br>
+@param<br>
+@return<br>
+@throws</p>
+<ol start="3">
+<li>规约的强度：<br>
+前置条件越弱，规约越强。<br>
+后置条件越强，规约越强<br>
+（五）ADT的设计</li>
+<li>四种操作：<br>
+creator：可以是构造器或者工厂方法<br>
+producer：<br>
+mutator:<br>
+observer：</li>
+<li>表示独立性 与 表示泄露：<br>
+（1）类内部的rep不应该泄露给外部<br>
+例如：rep改成final + private  ；规约中不包含rep信息，只提供抽象空间的信息 ； mutable类型在返回和入口处需要防御性复制<br>
+（2）信息封装，rep的性质由类自身保证，不依赖客户端<br>
+例如：checkRep</li>
+<li>RI 与 AF<br>
+（1）RI：类自身需要保证的rep的性质<br>
+（2）AF：开发者的表示空间 到 客户端的抽象空间 的映射（满射）<br>
+（3）RI 与 AF以注释书写，类层面<br>
+（六）OOP的设计</li>
+<li>抽象到具体的设计特点<br>
+接口  抽象类  具体类<br>
+（1）继承 和 重写</li>
+<li>多态的特性<br>
+（1）子类型多态（运行时确定）<br>
+（2）重载多态（编译时确定）<br>
+重载：方法参数列表必须改变，只有返回值改变会报错。<br>
+（3）泛型多态</li>
+<li>重写 与 重载 的区别</li>
+</ol>
+<p>重写：运行时确定、动态类型检查、满足LSP原则<br>
+重载：编译时确定、静态类型检查<br>
+（七）等价性</p>
+<ol>
+<li>等价性：<br>
+对于immutable类型：一般采取对象等价性<br>
+（1）引用等价性：对象ID相同<br>
+（2）对象等价性：a。规约一致变量相同 ； b。自反、对称、传递 ；c。客户端观察行为一致<br>
+对于mutable类型：根据情况而定<br>
+（1）行为等价性：调用各种方法后依旧保持等价<br>
+（2）观察等价性：客户端角度观察行为一致</li>
+<li>等价性在equals中的具体应用<br>
+（1）immutable变量：<br>
+ 不重写equals：Object中默认实现的equals，即判断引用是否相同。<br>
+重写equals方法和hashcode方法：判断对象等价性<br>
+（2）mutable变量：<br>
+重写equals 和 hashcode方法：实现观察等价性，但类发生变化后在hash容器中出现错误<br>
+不重写equals：判断引用是否相同</li>
+</ol>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://duan-shuai.github.io/post/ruan-jian-gou-zao-01/">
+              <h3 class="post-title">
+                软件构造-01
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://duan-shuai.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

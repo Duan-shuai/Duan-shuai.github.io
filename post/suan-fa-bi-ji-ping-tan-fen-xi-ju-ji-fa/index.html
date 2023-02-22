@@ -1,0 +1,205 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>【算法笔记】平摊分析--聚集法 | 梦里飞雪飘</title>
+<link rel="shortcut icon" href="https://duan-shuai.github.io/favicon.ico?v=1677047621874">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://duan-shuai.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="【算法笔记】平摊分析--聚集法 | 梦里飞雪飘 - Atom Feed" href="https://duan-shuai.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="聚集法介绍
+将整体操作划分成单个的原子操作，用求和的方法计算 总代价 和 平摊代价
+注意：求和时运用好整体操作的规律
+【栈操作】
+
+问题定义：对初始为空的栈进行 push，pop 和 multipop三种操作
+规律：
+
+调用次数满足 pop..." />
+    <meta name="keywords" content="算法" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://duan-shuai.github.io">
+  <img class="avatar" src="https://duan-shuai.github.io/images/avatar.png?v=1677047621874" alt="">
+  </a>
+  <h1 class="site-title">
+    梦里飞雪飘
+  </h1>
+  <p class="site-description">
+    coding......
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              【算法笔记】平摊分析--聚集法
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-04-19
+              </span>
+              <span>
+                1 min read
+              </span>
+              
+                <a href="https://duan-shuai.github.io/tag/96Bx5rGp4/" class="post-tag">
+                  # 算法
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <h1 id="聚集法介绍">聚集法介绍</h1>
+<p>将整体操作划分成单个的原子操作，用求和的方法计算 总代价 和 平摊代价</p>
+<p>注意：求和时运用好整体操作的<strong>规律</strong></p>
+<p><strong>【栈操作】</strong></p>
+<ul>
+<li>问题定义：对初始为空的栈进行 push，pop 和 multipop三种操作</li>
+<li>规律：</li>
+</ul>
+<p>调用次数满足 pop + multipop &lt;= push ， 代价关系满足 <strong>pop + multipop &lt;= push</strong></p>
+<p>最坏的总代价问题 等价于 <strong>最大压入量</strong></p>
+<ul>
+<li>分析：</li>
+</ul>
+<p>设进行了n次操作，最大压入量为 n - 1, 总代价 2（n - 1）平摊代价为 2</p>
+<p>【二进制计数器】</p>
+<ul>
+<li>问题定义：从0开始的k位二进制计数器的代价分析</li>
+<li>规律：</li>
+</ul>
+<p><strong>A[ 0 ]每 1 次计数改变一次</strong></p>
+<p><strong>A[ 1 ]每 2 次计数改变一次</strong></p>
+<p><strong>A[ k-1 ]每 2k-1次计数改变一次</strong></p>
+<ul>
+<li>分析</li>
+</ul>
+<p>设进行了n次操作，A[ 0 ]代价为n，A[ 1 ]代价为[ n/2 ]，A[ k-1 ]代价为[ n/2k-1 ]，总代价为各项求和2n，平摊代价为2</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E8%81%9A%E9%9B%86%E6%B3%95%E4%BB%8B%E7%BB%8D">聚集法介绍</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://duan-shuai.github.io/post/suan-fa-bi-ji-dong-tai-gui-hua-qian-zhui-dong-tai-gui-hua-wen-ti/">
+              <h3 class="post-title">
+                【算法笔记】动态规划--前缀动态规划问题
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://duan-shuai.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

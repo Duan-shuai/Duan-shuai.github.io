@@ -1,0 +1,358 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>【cpp基础篇-02】内存管理 | 梦里飞雪飘</title>
+<link rel="shortcut icon" href="https://duan-shuai.github.io/favicon.ico?v=1677047621874">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://duan-shuai.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="【cpp基础篇-02】内存管理 | 梦里飞雪飘 - Atom Feed" href="https://duan-shuai.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="
+一、内存分配方式
+
+1.内存区域
+2.内存问题分析
+
+1.内存碎片
+2.内存泄露
+
+
+
+
+二、new与delete相关
+
+1.概述
+2.细节
+
+1.STL空间配置器
+2.new、operator new、placement new
+
+
+
+..." />
+    <meta name="keywords" content="cpp" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://duan-shuai.github.io">
+  <img class="avatar" src="https://duan-shuai.github.io/images/avatar.png?v=1677047621874" alt="">
+  </a>
+  <h1 class="site-title">
+    梦里飞雪飘
+  </h1>
+  <p class="site-description">
+    coding......
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              【cpp基础篇-02】内存管理
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-01-08
+              </span>
+              <span>
+                1 min read
+              </span>
+              
+                <a href="https://duan-shuai.github.io/tag/_oufcCkY2/" class="post-tag">
+                  # cpp
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p><ul class="markdownIt-TOC">
+<li><a href="#%E4%B8%80-%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E6%96%B9%E5%BC%8F">一、内存分配方式</a>
+<ul>
+<li><a href="#1%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F">1.内存区域</a></li>
+<li><a href="#2%E5%86%85%E5%AD%98%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90">2.内存问题分析</a>
+<ul>
+<li><a href="#1%E5%86%85%E5%AD%98%E7%A2%8E%E7%89%87">1.内存碎片</a></li>
+<li><a href="#2%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2">2.内存泄露</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E4%BA%8C-new%E4%B8%8Edelete%E7%9B%B8%E5%85%B3">二、new与delete相关</a>
+<ul>
+<li><a href="#1%E6%A6%82%E8%BF%B0">1.概述</a></li>
+<li><a href="#2%E7%BB%86%E8%8A%82">2.细节</a>
+<ul>
+<li><a href="#1stl%E7%A9%BA%E9%97%B4%E9%85%8D%E7%BD%AE%E5%99%A8">1.STL空间配置器</a></li>
+<li><a href="#2new-operator-new-placement-new">2.new、operator new、placement new</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</p>
+<hr style=" border:solid; width:600px; height:1px;" color=#000000 size=1">
+<h1 id="一-内存分配方式">一、内存分配方式</h1>
+<h2 id="1内存区域">1.内存区域</h2>
+<p>（1）栈<br>
+局部存储，函数生命周期结束时销毁<br>
+（2）堆<br>
+malloc与free管理<br>
+（3）自由存储区<br>
+new与delete管理，默认实现为堆，程序员可重载操作符产生其他实现<br>
+（4）全局/静态存储区<br>
+合并.data与.bss段的存储<br>
+（5）常量存储区</p>
+<h2 id="2内存问题分析">2.内存问题分析</h2>
+<h3 id="1内存碎片">1.内存碎片</h3>
+<p>频繁申请释放小块内存影响内存性能</p>
+<p>（1）原因</p>
+<ul>
+<li>内部碎片：内存分配的对齐原则导致产生碎片</li>
+<li>外部碎片：频繁的分配与回收物理页面</li>
+</ul>
+<p>（2）解决<br>
+对每个类重载new和delete运算符，从内存缓冲池申请空间</p>
+<h3 id="2内存泄露">2.内存泄露</h3>
+<p>指针先于内存空间被释放导致内存空间无法引用和回收</p>
+<p>（1）原因：<br>
+malloc和free不能对应使用<br>
+（2）细节<br>
+<strong>【new[ ]与delete[ ] 匹配问题】</strong><br>
+内置类型无需匹配，自定义类型不匹配会出现内存泄露</p>
+<pre><code class="language-cpp">int *p = new int[100];
+delete[] p;
+</code></pre>
+<p><strong>【堆上有指针的问题】</strong><br>
+先释放子节点，再释放父节点</p>
+<pre><code class="language-cpp">free(p-&gt;np);
+free(p);
+</code></pre>
+<p><strong>【注意多态特性】</strong></p>
+<ol>
+<li><strong>delete void*类型时不调用析构函数</strong></li>
+</ol>
+<pre><code class="language-cpp">//对应类型承接，delete时调用对应析构函数
+//void*类型承接，delete时无析构函数调用
+    Object* a = new Object(10, 'A');
+    void* b = new Object(20, 'B');
+    delete a; //释放a，调用析构函数
+    delete b; //释放b，不调用析构函数
+</code></pre>
+<ol start="2">
+<li><strong>父类析构函数问题</strong></li>
+</ol>
+<pre><code class="language-cpp">//若父类析构函数是virtual，p调用子类析构函数
+//若父类析构函数非虚函数，p调用父类析构函数，子类特性未释放，内存泄露
+	person *p = new child(20,'B');
+    delete p;
+</code></pre>
+<p><strong>【注意指针】</strong></p>
+<pre><code class="language-cpp">//错误写法
+void my_malloc(void *p, int size)
+{
+//p为函数创建的指针的副本，函数结束时销毁 
+	p = malloc(sizeof(int)*size);  
+}
+//正确写法
+void my_malloc(void **p, int size) or void my_malloc(void &amp;(*p), int size)
+{
+	*p = malloc(sizeof(int)*size);
+}
+</code></pre>
+<h1 id="二-new与delete相关">二、new与delete相关</h1>
+<h2 id="1概述">1.概述</h2>
+<pre><code class="language-cpp">new{
+    //分配内存，可重载 
+	operator new{
+		//分配堆内存 
+		malloc 
+	}
+	//调用构造函数 
+	ctor 
+} 
+</code></pre>
+<h2 id="2细节">2.细节</h2>
+<h3 id="1stl空间配置器">1.STL空间配置器</h3>
+<ul>
+<li>allocator：配置器默认实现，内部调用operator new</li>
+</ul>
+<pre><code class="language-cpp">//C++11 改名为 new_allocator
+int *p = allocator&lt;int&gt;().allocate(512, (int*)0);
+allocate&lt;int&gt;().deallocate(p, 512) 
+</code></pre>
+<ul>
+<li>alloc：二级配置器实现，性能更好</li>
+</ul>
+<pre><code class="language-cpp">//C++11 改名为__pool_alloc
+vector&lt;string, __gnu_cxx::__pool_alloc&lt;string&gt;&gt; vec;
+/* 
+两级配置器：
+（1）配置区超过128byte：一级配置器
+malloc + free + set_new_handler
+（2）配置区小于128byte：二级配置器
+内存池 + 自由链表
+*/
+</code></pre>
+<h3 id="2new-operator-new-placement-new">2.new、operator new、placement new</h3>
+<ul>
+<li>
+<p>new: 内置函数， 分配空间 + 调用构造函数<br>
+<code>T *p = new T();</code></p>
+</li>
+<li>
+<p>operator new: 可重载， 分配内存<br>
+<code>void *memory = operator new(sizeof(string));</code></p>
+</li>
+<li>
+<p>placement new: 标准operator new,  在已有内存创建对象<br>
+<code>void *operator new( size_t, void * p ) throw() { return p; }</code><br>
+<code>T *pb = new(pa) T</code></p>
+</li>
+</ul>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E4%B8%80-%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E6%96%B9%E5%BC%8F">一、内存分配方式</a>
+<ul>
+<li><a href="#1%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F">1.内存区域</a></li>
+<li><a href="#2%E5%86%85%E5%AD%98%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90">2.内存问题分析</a>
+<ul>
+<li><a href="#1%E5%86%85%E5%AD%98%E7%A2%8E%E7%89%87">1.内存碎片</a></li>
+<li><a href="#2%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2">2.内存泄露</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E4%BA%8C-new%E4%B8%8Edelete%E7%9B%B8%E5%85%B3">二、new与delete相关</a>
+<ul>
+<li><a href="#1%E6%A6%82%E8%BF%B0">1.概述</a></li>
+<li><a href="#2%E7%BB%86%E8%8A%82">2.细节</a>
+<ul>
+<li><a href="#1stl%E7%A9%BA%E9%97%B4%E9%85%8D%E7%BD%AE%E5%99%A8">1.STL空间配置器</a></li>
+<li><a href="#2new-operator-new-placement-new">2.new、operator new、placement new</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://duan-shuai.github.io/post/cpp-ji-chu-pian-01/">
+              <h3 class="post-title">
+                【cpp基础篇-01】面向对象
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://duan-shuai.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

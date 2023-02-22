@@ -1,0 +1,254 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>软件构造-03 | 梦里飞雪飘</title>
+<link rel="shortcut icon" href="https://duan-shuai.github.io/favicon.ico?v=1677047621874">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://duan-shuai.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="软件构造-03 | 梦里飞雪飘 - Atom Feed" href="https://duan-shuai.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="（一）Junit单元测试
+
+
+分类
+白盒测试：对程序内部代码 结构的测试
+黑盒测试：对程序外部表现出来的行 为的测试
+
+
+提倡测试优先编程的思想
+写规约 ~&gt; 写测试用例 ~&gt;写代码
+
+
+测试策略
+（1）等价类划分
+（2）笛卡尔..." />
+    <meta name="keywords" content="软件构造" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://duan-shuai.github.io">
+  <img class="avatar" src="https://duan-shuai.github.io/images/avatar.png?v=1677047621874" alt="">
+  </a>
+  <h1 class="site-title">
+    梦里飞雪飘
+  </h1>
+  <p class="site-description">
+    coding......
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              软件构造-03
+            </h2>
+            <div class="post-info">
+              <span>
+                2020-11-06
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+                <a href="https://duan-shuai.github.io/tag/0OyKTXzWK/" class="post-tag">
+                  # 软件构造
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>（一）Junit单元测试</p>
+<ol>
+<li>
+<p>分类<br>
+白盒测试：对程序内部代码 结构的测试<br>
+黑盒测试：对程序外部表现出来的行 为的测试</p>
+</li>
+<li>
+<p>提倡测试优先编程的思想<br>
+写规约 ~&gt; 写测试用例 ~&gt;写代码</p>
+</li>
+<li>
+<p>测试策略<br>
+（1）等价类划分<br>
+（2）笛卡尔积全覆盖 / 每个等价类至少覆盖一次<br>
+（3）边界值分析</p>
+</li>
+<li>
+<p>测试用例<br>
+@Test<br>
+assertEquals（expected，actual）<br>
+5练习<br>
+例1整数乘法<br>
+（1）正负角度划分：正负，正正，负负，负正<br>
+（2）边界值分析：0，-1，1，很大的数<br>
+例reverseEnd方法<br>
+For example: reverseEnd(&quot;Hello, world&quot;, 5) returns &quot;Hellodlrow ,&quot;<br>
+（1）等价类划分：start<mark>0 ，0&lt;start&lt;text.length，start</mark>text.length（等价类划分满足规约）<br>
+（二）异常</p>
+</li>
+<li>
+<p>error、checked异常、unchecked异常</p>
+</li>
+<li>
+<p>checked异常处理<br>
+（1）声明（throws）、抛出（throw）、捕获（try…catch）、处理</p>
+</li>
+<li>
+<p>自定义异常类<br>
+（三）并发</p>
+</li>
+<li>
+<p>进程和线程</p>
+</li>
+<li>
+<p>多线程方法<br>
+（1）sleep()：线程进入休眠，不会释放锁<br>
+（2）wait()：线程释放锁进入等待列表，直到获得锁再次参与竞争<br>
+（3）interrupt()：向线程请求中断，线程设置中断状态。如果程序在sleep、wait中会抛出中断异常；如果程序正常执行则无影响<br>
+（4）interrupted()：检查中断状态，并设置为false---类方法<br>
+（5）isinterrrupted()：检查中断状态，不改变状态<br>
+（6）join()：让当前线程保持执行，直到其执行结束<br>
+（7）notify()：唤醒某个等待列表的线程<br>
+（8）notifyAll()：唤醒所有等待列表的线程</p>
+</li>
+<li>
+<p>关于引发线程安全的原因：<br>
+变量在外部多引用下读写数据产生竞争交错<br>
+上述的数据：heap上的数据，（1）rep中的变量（基本类型（数组不安全）+对象类型（mutable类型不安全））（2）局部变量（若局部变量每次引用都会创建新的对象，则不存在问题；否则，注意对象类型依旧在堆上创建，可能存在风险）<br>
+4 线程安全策略<br>
+（1）限制共享：线程之间不共享数据<br>
+（2）只共享immutable类型：使用不可变数据类型的不可变引用（final）<br>
+（3）使用线程安全的mutable类型：synchronized包装类，<br>
+注意1：不要绕过包装器，被包装对象使用匿名类<br>
+注意2：保证了集合类中的每个方法是原子操作，但各种方法间的交错难以避免</p>
+</li>
+</ol>
+<p>（4）锁与同步技术</p>
+<p>1.  根据线程安全的原则找出不满足线程安全的部分</p>
+<p>2.  将并行变成部分串行，上锁<br>
+注意1：锁的粒度越大，越安全，但效率越低<br>
+注意2：存在竞争的线程使用同一把锁</p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://duan-shuai.github.io/post/ruan-jian-gou-zao-02/">
+              <h3 class="post-title">
+                软件构造-02
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://duan-shuai.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

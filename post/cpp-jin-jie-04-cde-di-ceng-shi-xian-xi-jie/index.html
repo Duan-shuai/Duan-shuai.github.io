@@ -1,0 +1,363 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>【cpp进阶-04】C++的底层实现细节 | 梦里飞雪飘</title>
+<link rel="shortcut icon" href="https://duan-shuai.github.io/favicon.ico?v=1677047621874">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://duan-shuai.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="【cpp进阶-04】C++的底层实现细节 | 梦里飞雪飘 - Atom Feed" href="https://duan-shuai.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="CPP底层细节
+面向对象
+类与对象
+类在编译时不占用内存空间，只是对象的模板。
+对象创建时在栈或堆分配内存。
+成员变量与成员函数
+
+成员变量分别存储在堆或栈中；成员函数（编译时经过名字编码为对象无关的全局函数，传入this指针）共享内存。
+..." />
+    <meta name="keywords" content="cpp" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://duan-shuai.github.io">
+  <img class="avatar" src="https://duan-shuai.github.io/images/avatar.png?v=1677047621874" alt="">
+  </a>
+  <h1 class="site-title">
+    梦里飞雪飘
+  </h1>
+  <p class="site-description">
+    coding......
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              【cpp进阶-04】C++的底层实现细节
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-05-22
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+                <a href="https://duan-shuai.github.io/tag/_oufcCkY2/" class="post-tag">
+                  # cpp
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <h1 id="cpp底层细节">CPP底层细节</h1>
+<h2 id="面向对象">面向对象</h2>
+<h3 id="类与对象">类与对象</h3>
+<p>类在编译时不占用内存空间，只是对象的模板。</p>
+<p>对象创建时在栈或堆分配内存。</p>
+<h4 id="成员变量与成员函数">成员变量与成员函数</h4>
+<img src="C:\Users\duans\AppData\Roaming\Typora\typora-user-images\image-20230222103428783.png" alt="image-20230222103428783" style="zoom:40%;" />
+<p>成员变量分别存储在堆或栈中；成员函数（编译时经过名字编码为对象无关的全局函数，传入this指针）共享内存。</p>
+<ul>
+<li>
+<p>静态变量</p>
+<p>静态成员变量存储在静态区，类的对象共享。</p>
+<p>静态成员函数存储在代码区，但不传入this指针。</p>
+</li>
+</ul>
+<h4 id="构造函数">构造函数</h4>
+<ul>
+<li>
+<p>自动生成</p>
+<p>用户未定义构造函数，编译器自动生成默认构造函数；用户定义构造函数后，编译器不再自动生成。</p>
+</li>
+<li>
+<p>初始化列表：对象类型，const类型，引用类型必须初始化构造。</p>
+<p>step1：分配内存空间</p>
+<p>step2：初始化成员变量</p>
+<p>step3：调用构造方法实现体</p>
+</li>
+</ul>
+<h4 id="析构函数">析构函数</h4>
+<p>对象类型会自动调用，指针类型需要delete调用。</p>
+<h3 id="三大特性">三大特性</h3>
+<h4 id="继承">继承</h4>
+<ul>
+<li>
+<p>虚函数</p>
+<ul>
+<li>
+<p>成员变量：</p>
+<p>若含有虚函数表指针 _vptr，虚函数表指针→基类变量→派生类变量</p>
+<p>若不含虚函数表指针_vptr，基类变量→派生类变量。</p>
+</li>
+<li>
+<p>成员函数：</p>
+<pre><code>case 普通函数：
+	根据指针的类型，调用指针类的函数。
+case 虚函数：
+	通过指针指向的对象的虚函数表找到函数，根据指针指向对象的类调用函数。
+	
+注意点：
+​		派生类无法重载基类，同名遮蔽。
+​		初始化列表不能写继承变量，需要借助基类的构造函数初始化。
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://img-blog.csdnimg.cn/ff539ed7db094edd8a5303a322d67b18.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBATWlyYWNsZTgwNzA=,size_2,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="在这里插入图片描述" loading="lazy"></figure>
+</li>
+<li>
+<p>构造函数与析构函数</p>
+<p>构造前未初始化虚函数表，构造函数不能设置为虚函数。</p>
+<p>析构函数设置为虚函数，防止内存泄漏。</p>
+</li>
+</ul>
+</li>
+<li>
+<p>多继承：内存模型如下</p>
+<img src="https://upload-images.jianshu.io/upload_images/5304392-20dd970ec197ab8f.jpg?imageMogr2/auto-orient/strip|imageView2/2/format/webp" alt="img" style="zoom:50%;" />
+</li>
+<li>
+<p>虚继承</p>
+<p>非虚继承存在二义性，重复定义的问题，虚继承用于解决菱形继承的问题。</p>
+<p>实现：例如A-&gt;B1,B2-&gt;C</p>
+<p>B1,B2分别保存A的虚基类指针，则C在取变量时不存在二义性。</p>
+</li>
+</ul>
+<h4 id="多态">多态</h4>
+<ul>
+<li>
+<p>介绍</p>
+<p>静态多态：编译时多态，重载、模板实现。</p>
+<p>动态多态：运行时多态，虚函数。</p>
+</li>
+</ul>
+<pre><code>内存模型小结
+若无虚函数，虚继承-&gt;普通对象内存模型
+含有虚函数-&gt;增加虚函数表
+含有虚继承-&gt;增加虚基类表
+</code></pre>
+<ul>
+<li>
+<p>模板与泛型</p>
+<ol>
+<li>
+<p>编译器的自动类型推导</p>
+</li>
+<li>
+<p>两次编译：声明处对模板编译，调用处参数替换后编译</p>
+</li>
+<li>
+<p>优势：提高复用性；编译时检查，安全性高</p>
+</li>
+</ol>
+</li>
+<li>
+<p>RTTI（Run-Time Type Identification)</p>
+<p><strong>typeid运算符</strong>：返回表达式或类型的实际类型。</p>
+<p><strong>dynamic_cast运算符</strong>：将基类指针转化为派生类指针。</p>
+<p>虚函数表中存放type_info来判断类型，上述运算符会通过查虚函数表获取类型。</p>
+</li>
+</ul>
+<h2 id="强类型语言">强类型语言</h2>
+<h3 id="类型转化">类型转化</h3>
+<h4 id="static_cast">static_cast</h4>
+<pre><code>静态转化，编译时进行，异常抛出编译时错误。
+
+一般说良性转化，风险度低。
+</code></pre>
+<h4 id="const_cast">const_cast</h4>
+<pre><code>去掉表达式中的volatile和const修饰符
+
+volatile：多线程使用，每次从内存中读取数据，保证不被修改。
+</code></pre>
+<h4 id="reinterpret_cast">reinterpret_cast</h4>
+<pre><code>仅对二进制位重新解释，不会根据规则转化，风险较大
+</code></pre>
+<h4 id="dynamic_cast">dynamic_cast</h4>
+<pre><code>继承层次之间的转化
+
+向上转化无条件；向下转化需要RTTI机制辅助。
+</code></pre>
+<h2 id="stl">STL</h2>
+<h3 id="容器">容器</h3>
+<ul>
+<li>vector：数组；支持快速随机访问</li>
+<li>list：双向链表；支持快速删除插入</li>
+<li>deque：指针数组+多个缓冲区；支持首位插入删除，快速随机访问</li>
+<li>set/map：红黑树；有序，不可重复</li>
+<li>multiset/multimap：红黑树；有序，可重复</li>
+<li>hashset/hashmap：hash表，无序，不可重复</li>
+</ul>
+<h3 id="适配器">适配器</h3>
+<ul>
+<li>stack：list 或 deque实现，不用vector是扩容耗时。</li>
+<li>queue：list 或 deque实现，不用vector是扩容耗时。</li>
+<li>priority_queue：vector+heap</li>
+</ul>
+<h3 id="扩容机制">扩容机制</h3>
+<p>每次以2倍或1.5倍扩容，g++2倍，MSVC是1.5倍。每次扩容在堆上开辟新空间。</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#cpp%E5%BA%95%E5%B1%82%E7%BB%86%E8%8A%82">CPP底层细节</a>
+<ul>
+<li><a href="#%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1">面向对象</a>
+<ul>
+<li><a href="#%E7%B1%BB%E4%B8%8E%E5%AF%B9%E8%B1%A1">类与对象</a>
+<ul>
+<li><a href="#%E6%88%90%E5%91%98%E5%8F%98%E9%87%8F%E4%B8%8E%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0">成员变量与成员函数</a></li>
+<li><a href="#%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0">构造函数</a></li>
+<li><a href="#%E6%9E%90%E6%9E%84%E5%87%BD%E6%95%B0">析构函数</a></li>
+</ul>
+</li>
+<li><a href="#%E4%B8%89%E5%A4%A7%E7%89%B9%E6%80%A7">三大特性</a>
+<ul>
+<li><a href="#%E7%BB%A7%E6%89%BF">继承</a></li>
+<li><a href="#%E5%A4%9A%E6%80%81">多态</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E5%BC%BA%E7%B1%BB%E5%9E%8B%E8%AF%AD%E8%A8%80">强类型语言</a>
+<ul>
+<li><a href="#%E7%B1%BB%E5%9E%8B%E8%BD%AC%E5%8C%96">类型转化</a>
+<ul>
+<li><a href="#static_cast">static_cast</a></li>
+<li><a href="#const_cast">const_cast</a></li>
+<li><a href="#reinterpret_cast">reinterpret_cast</a></li>
+<li><a href="#dynamic_cast">dynamic_cast</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#stl">STL</a>
+<ul>
+<li><a href="#%E5%AE%B9%E5%99%A8">容器</a></li>
+<li><a href="#%E9%80%82%E9%85%8D%E5%99%A8">适配器</a></li>
+<li><a href="#%E6%89%A9%E5%AE%B9%E6%9C%BA%E5%88%B6">扩容机制</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://duan-shuai.github.io/post/cpp-jin-jie-02/">
+              <h3 class="post-title">
+                【cpp进阶-02】谈谈c++11新特性（1）
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://duan-shuai.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

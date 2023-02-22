@@ -1,0 +1,302 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>【操作系统-01】内存管理 | 梦里飞雪飘</title>
+<link rel="shortcut icon" href="https://duan-shuai.github.io/favicon.ico?v=1677047621874">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://duan-shuai.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="【操作系统-01】内存管理 | 梦里飞雪飘 - Atom Feed" href="https://duan-shuai.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="硬件存储结构
+分层存储结构
+
+缓存一致性
+读写问题
+（1）读命中 与 读不命中：逐层访问缓存读取内容
+（2）写直达：把数据同时写入内存和 Cache
+每次需要写回内存，性能较低
+（3）写回：当发生写操作时，新的数据仅仅被写入 Cache B..." />
+    <meta name="keywords" content="操作系统" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://duan-shuai.github.io">
+  <img class="avatar" src="https://duan-shuai.github.io/images/avatar.png?v=1677047621874" alt="">
+  </a>
+  <h1 class="site-title">
+    梦里飞雪飘
+  </h1>
+  <p class="site-description">
+    coding......
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              【操作系统-01】内存管理
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-06-01
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+                <a href="https://duan-shuai.github.io/tag/XICwjnZr3/" class="post-tag">
+                  # 操作系统
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <h1 id="硬件存储结构">硬件存储结构</h1>
+<h2 id="分层存储结构">分层存储结构</h2>
+<img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost2/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84/CPU-Cache.png" alt="img" style="zoom: 50%;" />
+<h2 id="缓存一致性">缓存一致性</h2>
+<h3 id="读写问题">读写问题</h3>
+<p>（1）读命中 与 读不命中：逐层访问缓存读取内容</p>
+<p>（2）写直达：把数据同时写入内存和 Cache</p>
+<p><strong>每次需要写回内存，性能较低</strong></p>
+<p>（3）写回：当发生写操作时，新的数据仅仅被写入 Cache Block 里，只有当修改过的 Cache Block「被替换」时才需要写到内存中</p>
+<p><strong>减少了数据写回内存的频率，这样便可以提高系统的性能</strong></p>
+<h3 id="替换策略">替换策略</h3>
+<p>希望保持缓存的高命中，对于一些频繁访问的数据我们希望可以一直留在内存中，而一些很少访问的数据希望可以在某些时机可以淘汰掉。</p>
+<h4 id="1-传统lru">1. 传统LRU</h4>
+<img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/mysql/innodb/lru.png" alt="img" style="zoom:67%;" />
+<p>（1）时间局部性：</p>
+<p><strong>每当发生读写不命中的情况，将当前页加入到LRU的头部，缓存满时，将尾部丢弃</strong></p>
+<p>（2）空间局部性</p>
+<p><strong>预读机制</strong>：每次向LRU中加载多个相邻的页</p>
+<p>（3）问题</p>
+<p>a.预读的问题（预读失效，污染缓存）</p>
+<p>b.频繁替换问题</p>
+<h4 id="2-改进lru">2. 改进LRU</h4>
+<p>（1）划分active区和in-active区</p>
+<p>第一次读写：加入到in-active头部，并丢弃in-active的尾部。</p>
+<p>第二次读写：从in-active提升到active头部，将active尾部下降为in-active。</p>
+<img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/mysql/innodb/lruthree.drawio.png" alt="img" style="zoom:67%;" />
+<h4 id="3-时钟算法">3. 时钟算法</h4>
+<img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost2/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95/%E6%97%B6%E9%92%9F%E7%BD%AE%E6%8D%A2%E7%AE%97%E6%B3%95.png" alt="时钟页面置换算法" style="zoom:67%;" />
+<p>综合FIFO和LRU方法，将页面保存在环形链表中，表针指向最老的页面。</p>
+<p>每当访问命中，将访问位置1；</p>
+<p>每当访问不命中，触发缺页中断，将表针沿途的访问位置0，替换第一个访问位不为1的页面。</p>
+<h1 id="虚拟内存">虚拟内存</h1>
+<h2 id="虚拟内存-2">虚拟内存</h2>
+<p>（1）虚拟地址为逻辑地址，可以防止不同进程间的内存污染。</p>
+<p>（2）内存管理、分配（虚拟地址的分配）、释放的便捷性：将不连续的物理空间抽象为连续的地址空间。</p>
+<h2 id="段页式内存管理">段页式内存管理</h2>
+<ol>
+<li>
+<p>段式管理：虚拟地址=段选择因子+段偏移量</p>
+<p>每次分配的空间大小不一，容易产生内存<strong>外部碎片</strong></p>
+</li>
+<li>
+<p>页式管理：虚拟地址=页号+页偏移量</p>
+<p>内存分配成大小相等的页，容易产生内存<strong>内部碎片</strong></p>
+<p>（1）页表=pair(虚拟页号, 物理页号)</p>
+<p>（2）多级页表：<strong>如果某个一级页表的页表项没有被用到，也就不需要创建这个页表项对应的二级页表了，即可以在需要时才创建二级页表</strong>。</p>
+<p>（3）TLB（快表）：把经常使用到的页表页加入缓存中</p>
+<figure data-type="image" tabindex="1"><img src="https://www.linuxidc.com/upload/2016_12/161208091852401.png" alt="MMU功能图" loading="lazy"></figure>
+<ol>
+<li>
+<p>linux下使用的段页式的内存管理</p>
+<img src="https://img-blog.csdnimg.cn/bc0aaaf379fc4bc8882efd94b9052b64.png" alt="img" style="zoom:67%;" />
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="进程内存模型">进程内存模型</h2>
+<p>操作系统为每个进程抽象出独立的虚拟内存空间，其内存模型如下：</p>
+<figure data-type="image" tabindex="2"><img src="https://pic1.zhimg.com/v2-0e174cd7632d05717437f49e94ae60be_r.jpg" alt="查看源图像" loading="lazy"></figure>
+<h1 id="malloc内存分配">malloc内存分配</h1>
+<h2 id="分配方式">分配方式</h2>
+<ol>
+<li>
+<p><strong>brk()系统调用从堆内存分配</strong></p>
+</li>
+<li>
+<p><strong>mmap()系统调用从文件映射区分配</strong></p>
+</li>
+</ol>
+<h2 id="分配细节">分配细节</h2>
+<h3 id="1-brk与mmap">1. brk()与mmap()</h3>
+<ol>
+<li>
+<p>mmap:</p>
+<p>访问容易触发缺页中断，频繁在用户态和内核态之间切换，效率低</p>
+</li>
+<li>
+<p>brk：</p>
+<p>频繁的分配释放容易产生内存碎片，发生内存泄漏</p>
+</li>
+</ol>
+<p><strong>一般规定：&lt;128KB使用brk()；&gt;128KB使用mmap()</strong>。</p>
+<h3 id="2-调用时分配虚拟内存访问时开辟物理内存">2. 调用时分配虚拟内存，访问时开辟物理内存</h3>
+<h3 id="3-预分配-与-延迟释放">3. 预分配 与 延迟释放</h3>
+<ol>
+<li><strong>malloc()：会预分配更大的空间作为内存池</strong></li>
+<li><strong>free()：brk()方式申请的内存会保留，进程结束后归还操作系统</strong>；<strong>mmap()方式申请的内存会被释放</strong>。</li>
+</ol>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E7%A1%AC%E4%BB%B6%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84">硬件存储结构</a>
+<ul>
+<li><a href="#%E5%88%86%E5%B1%82%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84">分层存储结构</a></li>
+<li><a href="#%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7">缓存一致性</a>
+<ul>
+<li><a href="#%E8%AF%BB%E5%86%99%E9%97%AE%E9%A2%98">读写问题</a></li>
+<li><a href="#%E6%9B%BF%E6%8D%A2%E7%AD%96%E7%95%A5">替换策略</a>
+<ul>
+<li><a href="#1-%E4%BC%A0%E7%BB%9Flru">1. 传统LRU</a></li>
+<li><a href="#2-%E6%94%B9%E8%BF%9Blru">2. 改进LRU</a></li>
+<li><a href="#3-%E6%97%B6%E9%92%9F%E7%AE%97%E6%B3%95">3. 时钟算法</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98">虚拟内存</a>
+<ul>
+<li><a href="#%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98-2">虚拟内存</a></li>
+<li><a href="#%E6%AE%B5%E9%A1%B5%E5%BC%8F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86">段页式内存管理</a></li>
+<li><a href="#%E8%BF%9B%E7%A8%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B">进程内存模型</a></li>
+</ul>
+</li>
+<li><a href="#malloc%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D">malloc内存分配</a>
+<ul>
+<li><a href="#%E5%88%86%E9%85%8D%E6%96%B9%E5%BC%8F">分配方式</a></li>
+<li><a href="#%E5%88%86%E9%85%8D%E7%BB%86%E8%8A%82">分配细节</a>
+<ul>
+<li><a href="#1-brk%E4%B8%8Emmap">1. brk()与mmap()</a></li>
+<li><a href="#2-%E8%B0%83%E7%94%A8%E6%97%B6%E5%88%86%E9%85%8D%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E8%AE%BF%E9%97%AE%E6%97%B6%E5%BC%80%E8%BE%9F%E7%89%A9%E7%90%86%E5%86%85%E5%AD%98">2. 调用时分配虚拟内存，访问时开辟物理内存</a></li>
+<li><a href="#3-%E9%A2%84%E5%88%86%E9%85%8D-%E4%B8%8E-%E5%BB%B6%E8%BF%9F%E9%87%8A%E6%94%BE">3. 预分配 与 延迟释放</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://duan-shuai.github.io/post/cpp-jin-jie-04-cde-di-ceng-shi-xian-xi-jie/">
+              <h3 class="post-title">
+                【cpp进阶-04】C++的底层实现细节
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://duan-shuai.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

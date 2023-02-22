@@ -1,0 +1,211 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>【算法笔记】贪心法--介绍 | 梦里飞雪飘</title>
+<link rel="shortcut icon" href="https://duan-shuai.github.io/favicon.ico?v=1677047621874">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://duan-shuai.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="【算法笔记】贪心法--介绍 | 梦里飞雪飘 - Atom Feed" href="https://duan-shuai.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="
+优化子结构
+
+若一个优化问题的优化解包含它的 子问题的优化解，则称其具有优化子结构
+
+贪心选择性
+
+若一个优化问题的全局优化解可以通过 局部优化选择得到，则该问题称为具有 贪心选择性.
+使用贪心算法解决问题时：
+
+
+设计贪心方法
+
+
+证明..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://duan-shuai.github.io">
+  <img class="avatar" src="https://duan-shuai.github.io/images/avatar.png?v=1677047621874" alt="">
+  </a>
+  <h1 class="site-title">
+    梦里飞雪飘
+  </h1>
+  <p class="site-description">
+    coding......
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              【算法笔记】贪心法--介绍
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-02-21
+              </span>
+              <span>
+                1 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <ol>
+<li>优化子结构</li>
+</ol>
+<p>若一个优化问题的优化解包含它的 子问题的优化解，则称其具有优化子结构</p>
+<ol start="2">
+<li>贪心选择性</li>
+</ol>
+<p>若一个优化问题的全局优化解可以通过 局部优化选择得到，则该问题称为具有 贪心选择性.</p>
+<h2 id="使用贪心算法解决问题时">使用贪心算法解决问题时：</h2>
+<ol>
+<li>
+<p>设计贪心方法</p>
+</li>
+<li>
+<p>证明贪心法的正确性（有时比设计算法更重要）</p>
+</li>
+</ol>
+<p>例：活动最大相容问题</p>
+<figure data-type="image" tabindex="1"><img src="https://img2020.cnblogs.com/blog/2071899/202006/2071899-20200619150615205-1803918251.png" alt="img" loading="lazy"></figure>
+<figure data-type="image" tabindex="2"><img src="https://img2020.cnblogs.com/blog/2071899/202006/2071899-20200619151347066-104275337.png" alt="img" loading="lazy"></figure>
+<p>（1） 证明优化子结构</p>
+<p>活动按照结束时间已经排好序</p>
+<p>即证明：设A是问题S的一个优化解且包含活动1，则A-{1}是问题S’（S’中最早的开始时间晚于f1）的优化解</p>
+<p>反证法（略）</p>
+<p>（2）证明贪心选择性</p>
+<p>归纳法（略）</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E4%BD%BF%E7%94%A8%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95%E8%A7%A3%E5%86%B3%E9%97%AE%E9%A2%98%E6%97%B6">使用贪心算法解决问题时：</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://duan-shuai.github.io/post/suan-fa-bi-ji-fen-zhi-fa-zhong-wei-shu-yu-shun-xu-tong-ji-liang/">
+              <h3 class="post-title">
+                【算法笔记】分治法--中位数与顺序统计量
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://duan-shuai.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

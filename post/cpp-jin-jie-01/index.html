@@ -1,0 +1,292 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>【cpp进阶-01】谈谈多态问题 | 梦里飞雪飘</title>
+<link rel="shortcut icon" href="https://duan-shuai.github.io/favicon.ico?v=1677047621874">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://duan-shuai.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="【cpp进阶-01】谈谈多态问题 | 梦里飞雪飘 - Atom Feed" href="https://duan-shuai.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="前言
+继承、封装、多态是面向对象的三大特性。
+本文主要介绍一些多态的细节来深入cpp。
+静态多态
+重载
+重载函数
+
+
+定义：
+在作用域范围内有多个名称相同但参数签名不同的函数
+
+
+注意：
+（1）返回值不能作为重载的判断依据
+（2）派生类不能..." />
+    <meta name="keywords" content="cpp" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://duan-shuai.github.io">
+  <img class="avatar" src="https://duan-shuai.github.io/images/avatar.png?v=1677047621874" alt="">
+  </a>
+  <h1 class="site-title">
+    梦里飞雪飘
+  </h1>
+  <p class="site-description">
+    coding......
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              【cpp进阶-01】谈谈多态问题
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-02-11
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+                <a href="https://duan-shuai.github.io/tag/_oufcCkY2/" class="post-tag">
+                  # cpp
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <h1 id="前言">前言</h1>
+<p>继承、封装、多态是面向对象的三大特性。<br>
+本文主要介绍一些多态的细节来深入cpp。</p>
+<h1 id="静态多态">静态多态</h1>
+<h2 id="重载">重载</h2>
+<h3 id="重载函数">重载函数</h3>
+<ol>
+<li>
+<p>定义：</p>
+<p><strong>在作用域范围内有多个名称相同但参数签名不同的函数</strong></p>
+</li>
+<li>
+<p>注意：</p>
+<p>（1）返回值不能作为重载的判断依据</p>
+<p>（2）派生类不能重载基类的同名函数，会遮蔽掉基类的函数</p>
+</li>
+<li>
+<p>底层实现：</p>
+<p>cpp在编译时会根据命名空间、类、参数类型进行名字编码，形成新的函数名，重载的不同函数便有不同的函数地址入口。</p>
+</li>
+</ol>
+<h3 id="重载运算符">重载运算符</h3>
+<p>将<code>operator 运算符名称</code>看作函数进行重载</p>
+<ol>
+<li>
+<p>成员函数的重载 与 全局函数的重载 选择</p>
+<p><code>+，-，*，/，==，!=</code>建议全局重载</p>
+<p><code>+=,-=,*=,/=</code>建议成员重载</p>
+</li>
+<li>
+<p>原因：转换构造函数</p>
+<pre><code>Complex{
+...
+friend Complex operator+(const Complex &amp;c1, const Complex &amp;c2);
+...
+}
+
+//友元+全局函数
+Complex operator+(const Complex &amp;c1, const Complex &amp;c2){
+    return Complex(c1.m_real + c2.m_real, c1.m_imag + c2.m_imag);
+}
+
+Complex c = Complex(1.0) + 2.0; //true: const&amp;:允许引用右值；自动类型转换。 
+</code></pre>
+</li>
+</ol>
+<h2 id="模板与泛型">模板与泛型</h2>
+<h3 id="参数推断">参数推断</h3>
+<p><strong>定义时不指明参数类型，调用时通过实参进行推断。</strong></p>
+<p>关键字：<code>template&lt;typename T&gt;</code></p>
+<h1 id="动态多态">动态多态</h1>
+<h2 id="继承与虚函数">继承与虚函数</h2>
+<ol>
+<li>
+<p><strong>为什么 基类的指针指向派生类对象，成员变量是派生类的，而成员函数是基类的？</strong></p>
+<p>根据cpp对象的内存模型解释：</p>
+<p>（1）成员变量：<strong>对象独有</strong>，与对象（派生类对象）绑定；</p>
+<p>（2）成员函数：<strong>类共享</strong>，预处理时根据类型，参数列表等重新命名函数，与类（基类）绑定；</p>
+</li>
+<li>
+<p><strong>为什么 虚函数可以解决上述问题？</strong></p>
+<p>每个对象内存中存在一个<strong>虚函数表的指针</strong>，调用函数时通过派生类对象的虚函数指针调用正确的函数。</p>
+</li>
+<li>
+<p><strong>为什么 构造函数不能是虚函数？</strong></p>
+<p>（1）构造函数无法继承，虚函数没有意义。</p>
+<p>（2）构造函数用于初始化，创建对象未完成，<strong>虚函数表指针尚未初始化</strong>，无法查询虚函数表调用正确的构造函数。</p>
+</li>
+<li>
+<p><strong>为什么 析构函数使用虚函数？</strong></p>
+<p>（1）若派生类在基类的基础上多生产了指针，使用了空间，不使用虚析构函数会导致部分空间不能被释放，<strong>内存泄漏</strong></p>
+</li>
+<li>
+<p><strong>解释一下虚函数表的内存模型</strong></p>
+</li>
+</ol>
+<figure data-type="image" tabindex="1"><img src="https://duan-shuai.github.io/post-images/1667011676435.png" alt="" loading="lazy"></figure>
+<p>（1）每一种类型独有一种虚函数表</p>
+<p>（2）如果派生类的同名虚函数遮蔽了基类的虚函数，将表中的函数进行替换</p>
+<p>（3）对象创建时在开头生成虚表指针指向类型的虚函数表</p>
+<ol>
+<li>
+<p>纯虚函数 和 抽象类</p>
+<p>（1）<code>virtual = 0</code>表示纯虚函数</p>
+<p>（2）抽象类无法实例化</p>
+</li>
+</ol>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E5%89%8D%E8%A8%80">前言</a></li>
+<li><a href="#%E9%9D%99%E6%80%81%E5%A4%9A%E6%80%81">静态多态</a>
+<ul>
+<li><a href="#%E9%87%8D%E8%BD%BD">重载</a>
+<ul>
+<li><a href="#%E9%87%8D%E8%BD%BD%E5%87%BD%E6%95%B0">重载函数</a></li>
+<li><a href="#%E9%87%8D%E8%BD%BD%E8%BF%90%E7%AE%97%E7%AC%A6">重载运算符</a></li>
+</ul>
+</li>
+<li><a href="#%E6%A8%A1%E6%9D%BF%E4%B8%8E%E6%B3%9B%E5%9E%8B">模板与泛型</a>
+<ul>
+<li><a href="#%E5%8F%82%E6%95%B0%E6%8E%A8%E6%96%AD">参数推断</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E5%8A%A8%E6%80%81%E5%A4%9A%E6%80%81">动态多态</a>
+<ul>
+<li><a href="#%E7%BB%A7%E6%89%BF%E4%B8%8E%E8%99%9A%E5%87%BD%E6%95%B0">继承与虚函数</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://duan-shuai.github.io/post/cpp-ji-chu-pian-03-wang-luo-bian-cheng/">
+              <h3 class="post-title">
+                【cpp基础篇-03】网络编程
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://duan-shuai.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

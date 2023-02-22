@@ -1,0 +1,389 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>【cpp基础篇-04】STL | 梦里飞雪飘</title>
+<link rel="shortcut icon" href="https://duan-shuai.github.io/favicon.ico?v=1677047621874">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://duan-shuai.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="【cpp基础篇-04】STL | 梦里飞雪飘 - Atom Feed" href="https://duan-shuai.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="STL
+容器
+string
+string、char[]、char*
+
+
+C风格字符串需要以'\0'结尾，C++风格字符串封装为string类形式
+
+
+内存分布
+（1）char s1[] = &quot;hello&quot;
+​		  &q..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://duan-shuai.github.io">
+  <img class="avatar" src="https://duan-shuai.github.io/images/avatar.png?v=1677047621874" alt="">
+  </a>
+  <h1 class="site-title">
+    梦里飞雪飘
+  </h1>
+  <p class="site-description">
+    coding......
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              【cpp基础篇-04】STL
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-02-19
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <h1 id="stl">STL</h1>
+<h2 id="容器">容器</h2>
+<h3 id="string">string</h3>
+<h4 id="string-char-char">string、char[]、char*</h4>
+<ol>
+<li>
+<p>C风格字符串需要以'\0'结尾，C++风格字符串封装为string类形式</p>
+</li>
+<li>
+<p><strong>内存分布</strong></p>
+<p>（1）char s1[] = &quot;hello&quot;</p>
+<p>​		  &quot;hello&quot;被保存两个副本：“hello”字符串保存在常量存储区；s1[]被赋值为“hello”保存在栈上。</p>
+<p>​		  s1指向的内存区域总是可写的。</p>
+<p>（2）char* s2 = &quot;hello&quot;</p>
+<p>​		  &quot;hello&quot;保存在常量存储区，char*指针指向hello存储的地址。</p>
+<p>​		  s2指向的区域有时可写。</p>
+</li>
+<li>
+<p>对比</p>
+<p>操作string需要创建和销毁临时变量，时间复杂，但是对类操作安全。</p>
+<p>C风格的字符串操作快速，但是存在内存泄漏等问题。</p>
+</li>
+</ol>
+<h4 id="相关函数">相关函数</h4>
+<p><strong>创建</strong></p>
+<pre><code class="language-cpp">#include &lt;string&gt;
+using namespace std;
+    
+    //通过const char * 初始化
+    string s1 = &quot;hello&quot;;
+    
+    //构造函数初始化
+    string s2(&quot;hello&quot;);
+    
+    //通过拷贝构造函数来初始化对象s3
+    string s3 = s2;
+    
+    //用10个'a'字符来初始化字符串
+    string s4(10, 'a');
+    
+</code></pre>
+<p><strong>遍历</strong></p>
+<pre><code>	//数组遍历
+	for (int i = 0; i &lt; str.length(); i++) {
+        cout&lt;&lt; str[i] &lt;&lt; endl;
+    }
+    
+    //迭代器遍历
+    for (string::iterator it = str.begin(); it != str.end(); it++) {
+        cout &lt;&lt; *it &lt;&lt; endl;
+    }
+</code></pre>
+<p><strong>string和char*转化</strong></p>
+<pre><code class="language-cpp">	//1 string转char *
+    string str(&quot;hello&quot;);
+    const char *p = str.c_str();
+
+    
+    //2 char *转string
+    const char *p1 = &quot;12345&quot;;
+    string str2 = p1;
+    
+    //3 string拷贝到buf[]中
+    char buf[128] = {0};
+    //从0开始，拷贝3个字符到buf指向的内存空间
+    //如果buf空间容纳不下，会越界
+    //拷贝过去时，不会给buf末尾添加\0
+	//copy(buf,size,begin)
+    str.copy(buf, 3, 0);
+</code></pre>
+<p><strong>拼接</strong></p>
+<pre><code class="language-cpp">    //直接使用加号运算符拼接
+    string s3 = s1 + s2;
+    
+    //使用成员函数拼接
+    string s4 = s1.append(s2);
+</code></pre>
+<p><strong>查找与替换</strong></p>
+<pre><code>s.find(stringA, pos)
+
+s.replace(pos,sizeof(stringA),stringB)
+</code></pre>
+<p>示例</p>
+<pre><code>//例：求hello出现的次数，以及对应的下标
+    
+    int count = 0;
+    size_t offindex = s1.find(&quot;hello&quot;,0);
+    while (offindex != string::npos) {  //如果 offindex != -1
+        //找到了
+        cout &lt;&lt; &quot;索引:&quot; &lt;&lt; offindex &lt;&lt;endl;
+        count++;
+        offindex++;
+        offindex = s1.find(&quot;hello&quot;, offindex);
+    }
+    
+//例：把hello替换成welcome
+    size_t offindex1 = s1.find(&quot;hello&quot;, 0);
+    while (offindex1 != string::npos) {
+        
+        //从offindex1的位置开始删除5个位置，并插入新的字符串welcome
+        s1.replace(offindex1, strlen(&quot;hello&quot;), &quot;welcome&quot;);
+        
+        //从后面的位置开始
+        offindex1 += strlen(&quot;welcome&quot;);
+        
+        //继续查找
+        offindex1 = s1.find(&quot;hello&quot;, offindex1);
+    }
+</code></pre>
+<p><strong>插入 删除</strong></p>
+<pre><code>insert
+
+erase
+</code></pre>
+<p><strong>大小写转化</strong></p>
+<pre><code>transform(s1.begin(), s1.end(), s1.begin(), (int (*)(int))toupper);
+
+transform(s1.begin(), s1.end(), s1.begin(), (int (*)(int))tolow
+er);
+</code></pre>
+<h3 id="vector">vector</h3>
+<h4 id="相关函数-2">相关函数</h4>
+<p><strong>初始化</strong></p>
+<pre><code>//一维
+vector&lt;int&gt; v1(size, nums);
+vector&lt;int&gt; v2(v1);
+vector&lt;int&gt; v2(v1.begin(), v1.end());
+
+//二维
+vector&lt;vector&lt;int&gt;&gt; v1(M);
+vector&lt;vector&lt;int&gt;&gt; v1(M, vector&lt;int&gt;(N));
+</code></pre>
+<p><strong>遍历</strong></p>
+<pre><code>//正向
+for(vector&lt;int&gt;::iterator it = v1.begin(); it != v1.end(); it++){
+	cout&lt;&lt;*it&lt;&lt;endl;
+}
+//反向
+for(vector&lt;int&gt;::reverse_iterator it = v1.rbegin(); it != v1.rend(); it++){
+
+}
+</code></pre>
+<p><strong>插入 删除</strong></p>
+<pre><code>//insert(pos, num)
+v1.insert(v1.begin()+i, x); //{0,1,...,i-1,x,i,...}
+
+//erase(pos)
+v1.erase(v1.begin()+i); //迭代删除时会指向下一个元素
+
+示例
+for(vector&lt;int&gt;::iterator it = c.begin(); it != c.end();){
+	if(*it)
+  		it = c.erase(it);
+ 	else
+  		++it; 
+}
+</code></pre>
+<h3 id="list">list</h3>
+<p><strong>链表结构，只能it++顺序访问，不能随机访问</strong></p>
+<h4 id="相关函数-3">相关函数</h4>
+<pre><code>push_back() 
+push_front()
+erase()
+remove()
+</code></pre>
+<h3 id="deque">deque</h3>
+<p><strong>双端队列</strong></p>
+<h4 id="相关函数-4">相关函数</h4>
+<pre><code>push_back();
+pop_back();
+push_front();
+pop_front();
+distance(it1, it2);
+</code></pre>
+<h2 id="适配器">适配器</h2>
+<h3 id="stack">stack</h3>
+<h3 id="queue">queue</h3>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#stl">STL</a>
+<ul>
+<li><a href="#%E5%AE%B9%E5%99%A8">容器</a>
+<ul>
+<li><a href="#string">string</a>
+<ul>
+<li><a href="#string-char-char">string、char[]、char*</a></li>
+<li><a href="#%E7%9B%B8%E5%85%B3%E5%87%BD%E6%95%B0">相关函数</a></li>
+</ul>
+</li>
+<li><a href="#vector">vector</a>
+<ul>
+<li><a href="#%E7%9B%B8%E5%85%B3%E5%87%BD%E6%95%B0-2">相关函数</a></li>
+</ul>
+</li>
+<li><a href="#list">list</a>
+<ul>
+<li><a href="#%E7%9B%B8%E5%85%B3%E5%87%BD%E6%95%B0-3">相关函数</a></li>
+</ul>
+</li>
+<li><a href="#deque">deque</a>
+<ul>
+<li><a href="#%E7%9B%B8%E5%85%B3%E5%87%BD%E6%95%B0-4">相关函数</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E9%80%82%E9%85%8D%E5%99%A8">适配器</a>
+<ul>
+<li><a href="#stack">stack</a></li>
+<li><a href="#queue">queue</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://duan-shuai.github.io/post/cpp-jin-jie-01/">
+              <h3 class="post-title">
+                【cpp进阶-01】谈谈多态问题
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://duan-shuai.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

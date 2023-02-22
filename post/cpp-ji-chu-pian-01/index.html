@@ -1,0 +1,537 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>【cpp基础篇-01】面向对象 | 梦里飞雪飘</title>
+<link rel="shortcut icon" href="https://duan-shuai.github.io/favicon.ico?v=1677047621874">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://duan-shuai.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="【cpp基础篇-01】面向对象 | 梦里飞雪飘 - Atom Feed" href="https://duan-shuai.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="
+一、头文件与命名空间
+
+1. 头文件是什么
+2.几个特殊情况
+3.命名空间
+
+
+二、面向对象编程
+
+1.语法点
+
+1.1 private、public、protected
+1.2 inline
+1.3 const
+1.4 static
+1..." />
+    <meta name="keywords" content="cpp" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://duan-shuai.github.io">
+  <img class="avatar" src="https://duan-shuai.github.io/images/avatar.png?v=1677047621874" alt="">
+  </a>
+  <h1 class="site-title">
+    梦里飞雪飘
+  </h1>
+  <p class="site-description">
+    coding......
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              【cpp基础篇-01】面向对象
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-12-16
+              </span>
+              <span>
+                1 min read
+              </span>
+              
+                <a href="https://duan-shuai.github.io/tag/_oufcCkY2/" class="post-tag">
+                  # cpp
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p><ul class="markdownIt-TOC">
+<li><a href="#%E4%B8%80-%E5%A4%B4%E6%96%87%E4%BB%B6%E4%B8%8E%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4">一、头文件与命名空间</a>
+<ul>
+<li><a href="#1-%E5%A4%B4%E6%96%87%E4%BB%B6%E6%98%AF%E4%BB%80%E4%B9%88">1. 头文件是什么</a></li>
+<li><a href="#2%E5%87%A0%E4%B8%AA%E7%89%B9%E6%AE%8A%E6%83%85%E5%86%B5">2.几个特殊情况</a></li>
+<li><a href="#3%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4">3.命名空间</a></li>
+</ul>
+</li>
+<li><a href="#%E4%BA%8C-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B">二、面向对象编程</a>
+<ul>
+<li><a href="#1%E8%AF%AD%E6%B3%95%E7%82%B9">1.语法点</a>
+<ul>
+<li><a href="#11-private-public-protected">1.1 private、public、protected</a></li>
+<li><a href="#12-inline">1.2 inline</a></li>
+<li><a href="#13-const">1.3 const</a></li>
+<li><a href="#14-static">1.4 static</a></li>
+<li><a href="#15-friend">1.5 friend</a></li>
+</ul>
+</li>
+<li><a href="#2%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%9A%84%E9%9A%BE%E7%82%B9%E9%97%AE%E9%A2%98">2.面向对象的难点问题</a>
+<ul>
+<li><a href="#21-%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0">2.1 构造函数</a></li>
+<li><a href="#22-%E6%93%8D%E4%BD%9C%E7%AC%A6%E9%87%8D%E8%BD%BD%E9%97%AE%E9%A2%98">2.2 操作符重载问题</a></li>
+<li><a href="#23-copy%E9%97%AE%E9%A2%98">2.3 copy问题</a></li>
+<li><a href="#24-%E6%9E%90%E6%9E%84%E5%87%BD%E6%95%B0%E9%97%AE%E9%A2%98">2.4 析构函数问题</a></li>
+<li><a href="#25-%E5%80%BC-%E6%8C%87%E9%92%88-%E5%BC%95%E7%94%A8">2.5 值、指针、引用</a>
+<ul>
+<li><a href="#251-value-%E4%B8%8E-reference">2.5.1 value 与 reference</a></li>
+<li><a href="#252-reference-%E4%B8%8E-pointer">2.5.2 reference 与 pointer</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E4%BA%8C-%E7%A4%BA%E4%BE%8B">二、示例</a>
+<ul>
+<li><a href="#1%E7%B1%BB%E4%B8%8D%E5%90%AB%E6%8C%87%E9%92%88complex">1.类不含指针（Complex）</a></li>
+<li><a href="#2%E7%B1%BB%E5%90%AB%E6%8C%87%E9%92%88string">2.类含指针（String）</a></li>
+</ul>
+</li>
+</ul>
+</p>
+<hr style=" border:solid; width:600px; height:1px;" color=#600011 size=1">
+<h1 id="一-头文件与命名空间">一、头文件与命名空间</h1>
+<h2 id="1-头文件是什么">1. 头文件是什么</h2>
+<p>例：A.cpp, A.h, B.cpp<br>
+A.h 头文件 中写入类声明、函数原型、#define;<br>
+A.cpp实现文件 写入类函数的定义实现；<br>
+B.cpp调用文件 通过一个宏命令 &quot;#include&quot;  调用A.h中的类和函数等<br>
+[注1] 头文件无需编译，只需在源文件预处理时被合并<br>
+[注2]#include功能仅是简单的文本替换<br>
+[注3]系统头文件用&lt; &gt;, 自定义头文件用&quot; &quot;</p>
+<pre><code class="language-cpp">//头文件的防御式编程
+#ifndef A_H
+#define A_H
+
+//...
+
+#endif
+</code></pre>
+<h2 id="2几个特殊情况">2.几个特殊情况</h2>
+<p>（1）static修饰变量、函数可以写在.h文件中<br>
+（2）inline内联函数定义可以写在.h文件中<br>
+（3）模板类型可以写在.h中，模板在调用时才编译</p>
+<h2 id="3命名空间">3.命名空间</h2>
+<p>区分不同库中相同名称的函数、类、变量</p>
+<ol>
+<li>定义</li>
+</ol>
+<pre><code class="language-cpp">namespace namespace_name {
+   // 代码声明
+}
+</code></pre>
+<ol start="2">
+<li>调用</li>
+</ol>
+<pre><code class="language-cpp">name::code;  // code 可以是变量或函数
+</code></pre>
+<pre><code class="language-cpp">//后续的代码将使用指定的命名空间中的名称。
+using namespace namespace_name;
+
+//指定命名空间中的特定项目
+using std::cout;
+</code></pre>
+<h1 id="二-面向对象编程">二、面向对象编程</h1>
+<h2 id="1语法点">1.语法点</h2>
+<h3 id="11-private-public-protected">1.1 private、public、protected</h3>
+<p>（1）数据防止泄露，通常为private。<br>
+（2）protected可由派生类访问。<br>
+（3）同一类的不同对象可以相互访问private变量、函数。</p>
+<h3 id="12-inline">1.2 inline</h3>
+<p>（1）内联函数的两种写法：</p>
+<ol>
+<li>定义写在类内</li>
+<li>定义写在类外，加上inline前缀</li>
+</ol>
+<p>（2）内联函数只是一种建议，具体实现由编译器决定<br>
+（3）内联函数减少了运行栈保存变量的开销</p>
+<h3 id="13-const">1.3 const</h3>
+<p>（1）const成员变量：不应被改变<br>
+（2）const成员函数：不应改变成员变量的值<br>
+（3）const对象：只能访问被 const 修饰的成员函数、变量<br>
+（4）const int* p与int* const p</p>
+<h3 id="14-static">1.4 static</h3>
+<p>static类型属于类，对象间共享内存<br>
+（1）static成员变量<br>
+（2）stattic成员函数</p>
+<ol>
+<li>只能访问静态成员变量</li>
+<li>声明时加static，定义时不加static</li>
+</ol>
+<h3 id="15-friend">1.5 friend</h3>
+<p>【友元函数】<br>
+（1）友元函数不是类的成员函数，在类中声明，类外定义<br>
+（2）友元函数有权访问类的private、protected、public函数和变量。<br>
+（3）友元函数必须通过参数传递<strong>对象</strong>才能访问类的成员<br>
+【友元类】<br>
+（1）友元类中的所有成员函数都是另外一个类的友元函数。</p>
+<h2 id="2面向对象的难点问题">2.面向对象的难点问题</h2>
+<h3 id="21-构造函数">2.1 构造函数</h3>
+<ol>
+<li>初始化问题<br>
+<code>complex(double r, double i):re(r),im(i) {}</code><br>
+提前初始化，而不是用assign赋值有利于提高性能。</li>
+<li>构造函数可以重载</li>
+<li>private中的构造函数：单例模式</li>
+</ol>
+<h3 id="22-操作符重载问题">2.2 操作符重载问题</h3>
+<ol>
+<li>操作符重载的两种方法<br>
+成员函数方法：a.op(b)，含有返回值满足连续op的情况;<br>
+全局函数+友元函数方法：op(a,b);</li>
+<li>不能重载的操作符<br>
+<code>. 		</code> <code>?: 		</code> <code> :: 		</code> <code>sizeof</code></li>
+<li>运算符重载不改变优先级</li>
+</ol>
+<h3 id="23-copy问题">2.3 copy问题</h3>
+<ol>
+<li>深拷贝 和 浅拷贝<br>
+浅拷贝：类内变量创建副本，类内指针共享内存<br>
+深拷贝：需要自定义重载</li>
+<li>默认拷贝为浅拷贝，含指针的类可能出现内存泄露</li>
+<li>拷贝构造copy ctor 和 拷贝赋值copy op=<br>
+copy op=	等价于	自我赋值检测 + delete_self + copy ctor</li>
+</ol>
+<h3 id="24-析构函数问题">2.4 析构函数问题</h3>
+<ol>
+<li>类内存在动态分配内存的情况时（往往表现为含指针），需要添加析构函数</li>
+<li>普通对象：消亡时自动调用析构函数</li>
+<li>指针对象：注意new与delete的匹配问题</li>
+</ol>
+<h3 id="25-值-指针-引用">2.5 值、指针、引用</h3>
+<h4 id="251-value-与-reference">2.5.1 value 与 reference</h4>
+<ol>
+<li>value：默认为浅拷贝，内存开销大</li>
+<li>reference：变量别名，共享内存</li>
+<li>返回局部变量时，不能声明为reference，因为局部变量在函数结束时销毁</li>
+</ol>
+<h4 id="252-reference-与-pointer">2.5.2 reference 与 pointer</h4>
+<ol>
+<li>pointer可能为null，reference必须被初始化</li>
+<li>pointer可以改变，reference不能更改</li>
+</ol>
+<h1 id="二-示例">二、示例</h1>
+<h2 id="1类不含指针complex">1.类不含指针（Complex）</h2>
+<p><font color=#999AAA >代码如下（示例）：</p>
+<pre><code class="language-c">#include&lt;iostream&gt;
+
+using namespace std;
+
+class Complex{
+
+private:
+	double real, imag;
+public:
+	//默认构造函数
+	Complex(){ } 
+	//重载构造函数 + 初始化列表 
+	Complex(double r, double i): real(r), imag(i){ }
+	//成员函数 的 操作符重载 + 临时对象 
+	Complex operator+(const Complex&amp; c) const{
+		//返回local变量不能使用reference 
+		return Complex(real + c.real, imag + c.imag); 
+	}
+	//全局函数 的 操作符重载 + 友元函数 
+	friend ostream&amp; operator&lt;&lt;(ostream&amp; os, Complex&amp; c);
+	friend Complex&amp; operator+=(Complex&amp; c1, const Complex&amp; c2);
+	/*
+	Complex&amp; operator+=(const Complex&amp; c2)
+	{
+		this-&gt;real += c2.real;
+		this-&gt;imag += c2.imag; 
+	} 
+	*/ 
+};
+
+Complex&amp; operator+=(Complex&amp; c1, const Complex&amp; c2){
+	c1.real += c2.real;
+	c1.imag += c2.imag;
+	return c1;
+}
+ostream&amp; operator&lt;&lt;(ostream&amp; os, Complex&amp; c){
+	os &lt;&lt; &quot;(&quot; &lt;&lt; c.real &lt;&lt; &quot;,&quot; &lt;&lt; c.imag &lt;&lt; &quot;)&quot;;
+	return os;
+}
+
+int main()
+{
+	Complex c1;
+	Complex c2(5,5);
+	const Complex c3(5,5);
+	c2 += c3;
+	c1 = c2 + c3;
+	cout&lt;&lt;c1&lt;&lt;endl;
+} 
+
+
+</code></pre>
+<h2 id="2类含指针string">2.类含指针（String）</h2>
+<p><font color=#999AAA >代码如下（示例）：</p>
+<pre><code class="language-c">#include&lt;iostream&gt;
+#include&lt;cstring&gt;
+/*
+注: 
+cstring：c++版的string.h 
+string: stl范畴
+string.h: c语言库，c++兼容 
+*/ 
+
+
+using namespace std;
+
+class String{
+private:
+	char* m_data;
+public:
+	String(const char* cstr = 0);
+	//copy ctor 
+	String(const String&amp; s);
+	//copy op=
+	String&amp; operator=(const String&amp; s);
+	//析构函数
+	~String(); 
+	
+	char* get_str() const{
+		return m_data;
+	}
+	
+	friend ostream&amp; operator&lt;&lt;(ostream&amp; os, const String&amp; s);
+};
+
+//注：不能同时在 声明 和 定义 中写默认参数 
+inline
+String::String(const char* cstr){
+	if(cstr){
+		m_data = new char[strlen(cstr) + 1];
+		strcpy(m_data, cstr);
+	}
+	else{
+		m_data = new char[1];
+		*m_data = '\0';
+	}
+	
+}
+
+inline
+String::~String(){
+	delete[] m_data;
+}
+
+inline
+String::String(const String&amp; s){
+	//深拷贝 
+	m_data = new char[ strlen(s.m_data) + 1 ];
+	strcpy(m_data, s.m_data); 
+}
+
+inline
+String&amp; String::operator=(const String&amp; s){
+	//step1:检查自我赋值
+	//注意指针细节：&amp;s，this：地址；s，*this：string内容 
+	if(&amp;s == this){
+		return *this;
+	} 
+	//step2:删除空间
+	delete[] m_data;
+	//step3:copy ctor
+	m_data = new char[ strlen(s.m_data) + 1 ];
+	strcpy(m_data, s.m_data);
+	return *this; 
+}
+
+ostream&amp; operator&lt;&lt;(ostream&amp; os, const String&amp; s)
+{
+	os&lt;&lt;s.get_str();
+	return os;
+}
+
+int main()
+{
+	const String s2(&quot;duan&quot;);
+	const String s3(&quot;shuai&quot;);
+	String s1(s2);
+	cout&lt;&lt;s1&lt;&lt;endl;
+	s1 = s3;
+	cout&lt;&lt;s1&lt;&lt;endl;
+}
+
+
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E4%B8%80-%E5%A4%B4%E6%96%87%E4%BB%B6%E4%B8%8E%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4">一、头文件与命名空间</a>
+<ul>
+<li><a href="#1-%E5%A4%B4%E6%96%87%E4%BB%B6%E6%98%AF%E4%BB%80%E4%B9%88">1. 头文件是什么</a></li>
+<li><a href="#2%E5%87%A0%E4%B8%AA%E7%89%B9%E6%AE%8A%E6%83%85%E5%86%B5">2.几个特殊情况</a></li>
+<li><a href="#3%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4">3.命名空间</a></li>
+</ul>
+</li>
+<li><a href="#%E4%BA%8C-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B">二、面向对象编程</a>
+<ul>
+<li><a href="#1%E8%AF%AD%E6%B3%95%E7%82%B9">1.语法点</a>
+<ul>
+<li><a href="#11-private-public-protected">1.1 private、public、protected</a></li>
+<li><a href="#12-inline">1.2 inline</a></li>
+<li><a href="#13-const">1.3 const</a></li>
+<li><a href="#14-static">1.4 static</a></li>
+<li><a href="#15-friend">1.5 friend</a></li>
+</ul>
+</li>
+<li><a href="#2%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%9A%84%E9%9A%BE%E7%82%B9%E9%97%AE%E9%A2%98">2.面向对象的难点问题</a>
+<ul>
+<li><a href="#21-%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0">2.1 构造函数</a></li>
+<li><a href="#22-%E6%93%8D%E4%BD%9C%E7%AC%A6%E9%87%8D%E8%BD%BD%E9%97%AE%E9%A2%98">2.2 操作符重载问题</a></li>
+<li><a href="#23-copy%E9%97%AE%E9%A2%98">2.3 copy问题</a></li>
+<li><a href="#24-%E6%9E%90%E6%9E%84%E5%87%BD%E6%95%B0%E9%97%AE%E9%A2%98">2.4 析构函数问题</a></li>
+<li><a href="#25-%E5%80%BC-%E6%8C%87%E9%92%88-%E5%BC%95%E7%94%A8">2.5 值、指针、引用</a>
+<ul>
+<li><a href="#251-value-%E4%B8%8E-reference">2.5.1 value 与 reference</a></li>
+<li><a href="#252-reference-%E4%B8%8E-pointer">2.5.2 reference 与 pointer</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E4%BA%8C-%E7%A4%BA%E4%BE%8B">二、示例</a>
+<ul>
+<li><a href="#1%E7%B1%BB%E4%B8%8D%E5%90%AB%E6%8C%87%E9%92%88complex">1.类不含指针（Complex）</a></li>
+<li><a href="#2%E7%B1%BB%E5%90%AB%E6%8C%87%E9%92%88string">2.类含指针（String）</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://duan-shuai.github.io/post/csapp-02-2/">
+              <h3 class="post-title">
+                【CSAPP-02】从源程序到进程（二）
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://duan-shuai.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

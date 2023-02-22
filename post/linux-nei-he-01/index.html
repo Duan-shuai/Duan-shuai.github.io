@@ -1,0 +1,231 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>【linux内核-01】 熟悉操作Linux 0.11内核 | 梦里飞雪飘</title>
+<link rel="shortcut icon" href="https://duan-shuai.github.io/favicon.ico?v=1677047621874">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://duan-shuai.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="【linux内核-01】 熟悉操作Linux 0.11内核 | 梦里飞雪飘 - Atom Feed" href="https://duan-shuai.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="熟悉操作Linux 0.11内核
+实验环境
+宿主操作系统：linux操作系统(ubuntu20.04)
+内核源代码：linux 0.11内核
+x86硬件平台的开源模拟器：bochs or qemu
+编译环境：gcc + vscode
+文件目..." />
+    <meta name="keywords" content="操作系统" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://duan-shuai.github.io">
+  <img class="avatar" src="https://duan-shuai.github.io/images/avatar.png?v=1677047621874" alt="">
+  </a>
+  <h1 class="site-title">
+    梦里飞雪飘
+  </h1>
+  <p class="site-description">
+    coding......
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              【linux内核-01】 熟悉操作Linux 0.11内核
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-11-01
+              </span>
+              <span>
+                2 min read
+              </span>
+              
+                <a href="https://duan-shuai.github.io/tag/XICwjnZr3/" class="post-tag">
+                  # 操作系统
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <h1 id="熟悉操作linux-011内核">熟悉操作Linux 0.11内核</h1>
+<h2 id="实验环境">实验环境</h2>
+<p><strong>宿主操作系统</strong>：linux操作系统(ubuntu20.04)</p>
+<p><strong>内核源代码</strong>：linux 0.11内核</p>
+<p><strong>x86硬件平台的开源模拟器</strong>：bochs or qemu</p>
+<p>编译环境：gcc + vscode</p>
+<h2 id="文件目录">文件目录</h2>
+<ol>
+<li>bochs目录：与 bochs 相关的执行文件、数据文件和配置文件。</li>
+<li>run 脚本：运行后 bochs 会自动在它的虚拟软驱 A 和虚拟硬盘上各挂载一个镜像文件，软驱上挂载是 linux-0.11/Image，硬盘上挂载的是 hdc-0.11.img。</li>
+<li>mount-hdc：宿主与linux 0.11进行文件交换</li>
+<li>dbg-asm：汇编级别调试内核</li>
+<li>dbg-c：c语言级别调试内核</li>
+</ol>
+<h2 id="编译运行内核源码">编译运行内核源码</h2>
+<h3 id="make">make</h3>
+<pre><code>$ cd ./linux-0.11/
+$ make all
+</code></pre>
+<p>生成目标文件：软盘镜像文件 <code>linux-0.11/Image</code></p>
+<h3 id="run">run</h3>
+<pre><code>$ cd ..
+$ ./run
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://duan-shuai.github.io/post-images/1667574792635.png" alt="" loading="lazy"></figure>
+<h2 id="文件交换">文件交换</h2>
+<h3 id="流程">流程</h3>
+<p>step1：启动挂载脚本 <code>sudo ./mount-hdc</code>，将内核文件系统挂载到hdc目录下</p>
+<p>step2：宿主操作系统在hdc目录下对内核文件修改</p>
+<p>step3：卸载hdc文件系统<code>sudo umount hdc</code>，此时内核文件成功在宿主操作系统中修改</p>
+<p>流程：</p>
+<pre><code>$ sudo ./mount-hdc
+$ cd hdc
+$ sudo touch hello.c
+$ cd ..
+$ sudo umount hdc
+$ ./run
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E7%86%9F%E6%82%89%E6%93%8D%E4%BD%9Clinux-011%E5%86%85%E6%A0%B8">熟悉操作Linux 0.11内核</a>
+<ul>
+<li><a href="#%E5%AE%9E%E9%AA%8C%E7%8E%AF%E5%A2%83">实验环境</a></li>
+<li><a href="#%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95">文件目录</a></li>
+<li><a href="#%E7%BC%96%E8%AF%91%E8%BF%90%E8%A1%8C%E5%86%85%E6%A0%B8%E6%BA%90%E7%A0%81">编译运行内核源码</a>
+<ul>
+<li><a href="#make">make</a></li>
+<li><a href="#run">run</a></li>
+</ul>
+</li>
+<li><a href="#%E6%96%87%E4%BB%B6%E4%BA%A4%E6%8D%A2">文件交换</a>
+<ul>
+<li><a href="#%E6%B5%81%E7%A8%8B">流程</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://duan-shuai.github.io/post/cao-zuo-xi-tong-01-nei-cun-guan-li/">
+              <h3 class="post-title">
+                【操作系统-01】内存管理
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://duan-shuai.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

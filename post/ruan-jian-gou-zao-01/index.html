@@ -1,0 +1,231 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>软件构造-01 | 梦里飞雪飘</title>
+<link rel="shortcut icon" href="https://duan-shuai.github.io/favicon.ico?v=1677047621874">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://duan-shuai.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="软件构造-01 | 梦里飞雪飘 - Atom Feed" href="https://duan-shuai.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="（一）软件的多维视图
+
+【Code-level + Build-time + Moment】
+词汇：使用的语句、字符串、变量、注释，半结构化的代码
+词法：AST语法树
+语义：UML图
+【Code-level + Build-time + P..." />
+    <meta name="keywords" content="软件构造" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://duan-shuai.github.io">
+  <img class="avatar" src="https://duan-shuai.github.io/images/avatar.png?v=1677047621874" alt="">
+  </a>
+  <h1 class="site-title">
+    梦里飞雪飘
+  </h1>
+  <p class="site-description">
+    coding......
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              软件构造-01
+            </h2>
+            <div class="post-info">
+              <span>
+                2020-10-23
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+                <a href="https://duan-shuai.github.io/tag/0OyKTXzWK/" class="post-tag">
+                  # 软件构造
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>（一）软件的多维视图<br>
+<img src="https://img-blog.csdnimg.cn/20200709160011268.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDExNzM3Ng==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" loading="lazy"></p>
+<p>【Code-level + Build-time + Moment】</p>
+<p>词汇：使用的语句、字符串、变量、注释，半结构化的代码<br>
+词法：AST语法树<br>
+语义：UML图</p>
+<p>【Code-level + Build-time + Period】</p>
+<p>Code Churn（代码变化）</p>
+<p>【Component-level  + Build-time + Moment】<br>
+files（文件）<br>
+directories（目录）<br>
+packages（包）</p>
+<p>libraries（库）<br>
+静态链接<br>
+【Component-level  + Build-time + Period】<br>
+版本控制（SCM、Git）<br>
+【Code level + Run-time + Moment】<br>
+snapshot(运行时的程序快照图)<br>
+memory dump（内存转储）<br>
+【Code level + Run-time + Period】<br>
+UML时序图<br>
+【Component level + Run-time + Period】</p>
+<p>执行跟踪tracing<br>
+系统日志<br>
+（二）软件开发的质量指标</p>
+<ol>
+<li>外部质量指标（面向用户）<br>
+【正确性】首先要保证的属性<br>
+【鲁棒性】通过添加异常处理来完善程序<br>
+【易扩展性】<br>
+【复用性】</li>
+<li>内部质量指标（面向开发者）<br>
+【LOC】代码行数<br>
+【圈复杂度】程序模块的路径复杂性<br>
+【高内聚低耦合】<br>
+（三）软件配置管理<br>
+【软件配置管理SCM】</li>
+</ol>
+<p>追踪和控制软件的变化<br>
+软件配置项SCI：软件中发生变化的基本单元（文件：Component-Level）</p>
+<p>【版本控制系统VCS】</p>
+<p>本地的VCS<br>
+集中式VCS（CVS、SVN）：通过服务器进行共享，客户端可以是全集或子集（Git只能是全集）<br>
+分布式VCS（Git）：用户之间可以直接进行推送，也可以通过云</p>
+<p>【版本控制工具git】<br>
+（1）基本指令<br>
+添加文件：git add xxx.xxx</p>
+<p>提交文件：git commit -m &quot;message&quot;</p>
+<p>push到远程仓库：git push origin master</p>
+<p>从远程仓库pull：git pull origin master<br>
+新建分支：git checkout -b branch_name<br>
+切换分支：git checkout branch_name or git checkout master<br>
+选择一个分支与当前分支合并：git merge branch_name2<br>
+（2）Git的整体架构——四个仓库（本地有三个）</p>
+<p>工作目录<br>
+暂存区域<br>
+本地库：源代码<br>
+云端软件服务器（远程仓库）</p>
+<p>（3）对象结构图<br>
+Object Graph</p>
+<p>版本之间的演化关系图<br>
+一条边A-&gt;B表征了“在版本B的基础上作出变化，形成了版本A”</p>
+<p>​</p>
+<p>（4）管理变化：</p>
+<p>Git存储发生变化的文件（而非代码行），不变化的文件不重复存储<br>
+Commits: nodes in Object Graph</p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://duan-shuai.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

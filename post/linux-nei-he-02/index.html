@@ -1,0 +1,384 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>【Linux内核-02】引导（boot）与初始化（init） | 梦里飞雪飘</title>
+<link rel="shortcut icon" href="https://duan-shuai.github.io/favicon.ico?v=1677047621874">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://duan-shuai.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="【Linux内核-02】引导（boot）与初始化（init） | 梦里飞雪飘 - Atom Feed" href="https://duan-shuai.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="引导启动程序（boot）
+概述
+boot/目录文件列表
+bootsect.s
+setup.s
+head.s
+
+注释：
+实模式+Intel：bootsect.s, setup.s
+保护模式+ATT：head.s
+
+原理
+
+步骤1：启动电源，C..." />
+    <meta name="keywords" content="操作系统" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://duan-shuai.github.io">
+  <img class="avatar" src="https://duan-shuai.github.io/images/avatar.png?v=1677047621874" alt="">
+  </a>
+  <h1 class="site-title">
+    梦里飞雪飘
+  </h1>
+  <p class="site-description">
+    coding......
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              【Linux内核-02】引导（boot）与初始化（init）
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-11-17
+              </span>
+              <span>
+                5 min read
+              </span>
+              
+                <a href="https://duan-shuai.github.io/tag/XICwjnZr3/" class="post-tag">
+                  # 操作系统
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <h1 id="引导启动程序boot">引导启动程序（boot）</h1>
+<h2 id="概述">概述</h2>
+<pre><code>boot/目录文件列表
+bootsect.s
+setup.s
+head.s
+
+注释：
+实模式+Intel：bootsect.s, setup.s
+保护模式+ATT：head.s
+</code></pre>
+<h2 id="原理">原理</h2>
+<figure data-type="image" tabindex="1"><img src="https://duan-shuai.github.io/post-images/1668953386993.png" alt="" loading="lazy"></figure>
+<p>步骤1：启动电源，CPU进入实模式，执行ROM-BIOS（位于内存<code>0xFFFF0</code>处），其功能为：（1）硬件检测；（2）在物理地址0处设置中断向量；（3）将引导扇区（第一个扇区，512字节）加载到<code>0x07c00</code>处。</p>
+<p>步骤2：执行bootsect.s（位于内存<code>0x7c00</code>处），其功能为：（1）将自身移动到<code>0x90000</code>~<code>0x90200</code>，共512B。（2）将setup模块（共四个扇区）加载到<code>0x90200</code>处。（3）将内核system模块加载到<code>0x10000</code>处。</p>
+<p>步骤3：执行setup.s（位于内存<code>0x90200</code>处），其功能为：（1）将system模块移动到物理内存起始地址。（2）进入保护模式并跳转到head.s</p>
+<p>步骤4：执行head.s（位于内存<code>0x00000</code>处），其功能为：（1）加载GDT、IDT、LDT；设置分页工作；完成保护模式的相关设置。（2）执行init/main.c</p>
+<h2 id="源码分析">源码分析</h2>
+<h3 id="bootsects">bootsect.S</h3>
+<pre><code>SETUPLEN = 4				! setup程序代码占用扇区数
+BOOTSEG  = 0x07c0			! bootsect程序代码所在内存原始地址
+INITSEG  = 0x9000			! 将bootsect移动到0x9000处
+SETUPSEG = 0x9020			! setup程序开始的地址
+
+! entry指定程序入口
+entry _start
+_start:
+
+! 将自身复制到0x9000处
+	mov	ax,#BOOTSEG 
+	mov	ds,ax  ！基址ds=0x7c00
+	mov	ax,#INITSEG 
+	mov	es,ax  ! 基址es=0x9000
+	mov	cx,#256
+	sub	si,si  ! 偏移si=0
+	sub	di,di  ! 偏移di=0
+	! ds:si = 0x7c000
+	! es:di = 0x90000
+	rep  movw  ! 重复移动256字节（0x7c00→0x9000）
+	jmpi	go,INITSEG  ! CS=INITSEG, ip=go.(顺序执行)
+	
+go:	mov	ax,cs
+	mov	ds,ax  
+	mov	es,ax 
+	! 设置ds=es=cs=0x9000
+
+! 加载setup.s程序
+load_setup: 
+	mov	dx,#0x0000		! dh:磁头号0, dl:驱动器号0
+	mov	cx,#0x0002		! ch:柱面号0, cl:开始扇区2
+	mov	bx,#0x0200		! es:bx = address = 0x9000 + 512
+	mov	ax,#0x0200+SETUPLEN	! ah:读磁盘功能号2, al:扇区数量4
+	int	0x13			! 读磁盘中断
+	jnc	ok_load_setup	! ok，读setup.S到0x90200
+	！加载错误
+	mov	dx,#0x0000
+	mov	ax,#0x0000		! 复位
+	int	0x13
+	j	load_setup		! 重读
+	
+! 输出一些信息
+ok_load_setup:
+	mov	ah,#0x03		! 当前位置
+	xor	bh,bh
+	int	0x10			! 中断：读当前光标
+	
+	mov	cx,#26			! 读26个字符
+	mov	bx,#0x000c		! page 0, attribute c 
+	mov	bp,#msg1		! es:bp = 指向待显示字符串
+	mov	ax,#0x1301		! write string, move cursor
+	int	0x10			! 显示中断
+!开始执行setup代码
+	jmpi 0,SETUPSEG
+
+msg1:
+	.byte 13,10			! 回车:13  换行:10
+	.ascii &quot;Duanos is loading...&quot;
+	.byte 13,10,13,10
+</code></pre>
+<h3 id="setups">setup.S</h3>
+<pre><code>entry _start
+_start:
+
+!设置cs=ds=es=0x9020
+	mov	ax,cs
+	mov	ds,ax
+	mov	es,ax
+
+	mov	ah,#0x03		! 当前位置
+	xor	bh,bh
+	int	0x10			! 中断：读当前光标
+	
+	mov	cx,#28			! 读28个字符
+	mov	bx,#0x000c		! page 0, attribute c 
+	mov	bp,#msg1
+	mov	ax,#0x1301		! write string, move cursor
+	int	0x10
+	
+	...
+
+! 获取拓展内存大小 =&gt; 0x9000:2;不同机器不同的内存（1m扩展）
+	mov	ah,#0x88
+	int	0x15
+	mov	[2],ax
+	
+	...
+
+! 移动system（0x10000→0x00000）
+do_move:
+	mov	es,ax		! destination segment: ex=0x0000
+	add	ax,#0x1000
+	cmp	ax,#0x9000
+	jz	end_move	! system内容覆盖boot
+	mov	ds,ax		! source segment: ds=0x1000
+	sub	di,di
+	sub	si,si
+	! ds:si = 0x10000
+	! es:di = 0x00000
+	mov cx,#0x8000
+	rep  movsw		! 重复移动8000字节
+	jmp	do_move
+	
+	...
+	
+! 进入保护模式
+	mov	ax,#0x0001	! 进入保护模式
+	lmsw	ax		! mov cr0 ax (cr0 = 0 or 1 : 实模式 or 保护模式)
+	! 此时寻址方式已经由实模式(16位)切换为保护模式(32位)
+	jmpi	0,8		! 跳转地址0x0000
+</code></pre>
+<h3 id="heads">head.s</h3>
+<pre><code>...					# startup_32
+... 				# set gdt, idt, ldt, page_table
+
+after_page_tables:
+	pushl $0		
+	pushl $0
+	pushl $0		# main参数argv[3]
+	pushl $L6		# 返回地址，跳转到main()
+	pushl $main
+	jmp setup_paging
+L6:
+	jmp L6			# 执行主函数
+</code></pre>
+<h1 id="初始化程序init">初始化程序（init）</h1>
+<h2 id="概述-2">概述</h2>
+<pre><code>init/目录文件列表
+main.c
+
+内核初始化的相关工作
+</code></pre>
+<p><strong>相关功能：各种初始化</strong></p>
+<ol>
+<li>初始化：陷阱门、块设备、字符设备和 tty。</li>
+<li>开启中断，切换到任务0运行</li>
+</ol>
+<h2 id="原理-2">原理</h2>
+<figure data-type="image" tabindex="2"><img src="https://duan-shuai.github.io/post-images/1668953418520.png" alt="" loading="lazy"></figure>
+<h2 id="源码分析-2">源码分析</h2>
+<pre><code>void main(void)
+{	
+	//初始化工作
+	mem_init(main_memory_start,memory_end);
+	trap_init();
+	blk_dev_init();
+	chr_dev_init();
+	tty_init();
+	time_init();
+	sched_init();
+	buffer_init(buffer_memory_end);
+	hd_init();
+	floppy_init();
+	sti();
+	move_to_user_mode();
+	if (!fork()) {		/* we count on this going ok */
+		init();
+	}
+	
+	for(;;) pause();
+}
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E5%BC%95%E5%AF%BC%E5%90%AF%E5%8A%A8%E7%A8%8B%E5%BA%8Fboot">引导启动程序（boot）</a>
+<ul>
+<li><a href="#%E6%A6%82%E8%BF%B0">概述</a></li>
+<li><a href="#%E5%8E%9F%E7%90%86">原理</a></li>
+<li><a href="#%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90">源码分析</a>
+<ul>
+<li><a href="#bootsects">bootsect.S</a></li>
+<li><a href="#setups">setup.S</a></li>
+<li><a href="#heads">head.s</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E7%A8%8B%E5%BA%8Finit">初始化程序（init）</a>
+<ul>
+<li><a href="#%E6%A6%82%E8%BF%B0-2">概述</a></li>
+<li><a href="#%E5%8E%9F%E7%90%86-2">原理</a></li>
+<li><a href="#%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-2">源码分析</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://duan-shuai.github.io/post/linux-nei-he-fan-wai/">
+              <h3 class="post-title">
+                【Linux内核-番外】汇编知识回顾
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://duan-shuai.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,370 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>【cpp进阶-02】谈谈c++11新特性（1） | 梦里飞雪飘</title>
+<link rel="shortcut icon" href="https://duan-shuai.github.io/favicon.ico?v=1677047621874">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://duan-shuai.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="【cpp进阶-02】谈谈c++11新特性（1） | 梦里飞雪飘 - Atom Feed" href="https://duan-shuai.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="auto和decltype
+auto
+auto+const
+类型不是引用时，auto推导抛弃const属性
+类型为引用时，auto推导继承const属性
+auto注意事项
+
+不能成为函数参数列表
+不能成为类非静态的成员变量
+不能定义数组
+需..." />
+    <meta name="keywords" content="cpp" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://duan-shuai.github.io">
+  <img class="avatar" src="https://duan-shuai.github.io/images/avatar.png?v=1677047621874" alt="">
+  </a>
+  <h1 class="site-title">
+    梦里飞雪飘
+  </h1>
+  <p class="site-description">
+    coding......
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              【cpp进阶-02】谈谈c++11新特性（1）
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-02-24
+              </span>
+              <span>
+                5 min read
+              </span>
+              
+                <a href="https://duan-shuai.github.io/tag/_oufcCkY2/" class="post-tag">
+                  # cpp
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <h1 id="auto和decltype">auto和decltype</h1>
+<h2 id="auto">auto</h2>
+<h3 id="autoconst">auto+const</h3>
+<p>类型不是引用时，auto推导抛弃const属性</p>
+<p>类型为引用时，auto推导继承const属性</p>
+<h3 id="auto注意事项">auto注意事项</h3>
+<ol>
+<li>不能成为函数参数列表</li>
+<li>不能成为类非静态的成员变量</li>
+<li>不能定义数组</li>
+<li>需要初始化</li>
+</ol>
+<h2 id="decltype">decltype</h2>
+<h3 id="decltype对比auto">decltype对比auto</h3>
+<p><code>auto varname = value;</code>:定义时需初始化值，类型自动推导。<br>
+<code>decltype(exp) varname = value;</code>:定义时类型由exp决定，无需初始化值。</p>
+<h3 id="decltype推导规则">decltype推导规则</h3>
+<ol>
+<li>exp为普通表达式，decltype的类型与exp类型一致</li>
+<li>exp为函数（返回值不为void），decltype的类型与函数返回值一致</li>
+<li>exp为左值 or 带有括号的表达式，deltype的类型为exp的引用类型</li>
+</ol>
+<h2 id="返回类型后置">返回类型后置</h2>
+<p>decltype + auto + 返回值后置 共同 完成返回值类型推导</p>
+<pre><code class="language-cpp">template &lt;typename T, typename U&gt;
+auto add(T t, U u) -&gt; decltype(t + u)
+{
+    return t + u;
+}
+</code></pre>
+<h1 id="using">using</h1>
+<h2 id="模板别名">模板别名</h2>
+<ol>
+<li>
+<p>typedef：需要模板外敷</p>
+<pre><code>template &lt;typename Val&gt;
+struct str_map
+{
+    typedef std::map&lt;std::string, Val&gt; type;
+};
+// ...
+str_map&lt;int&gt;::type map1;
+</code></pre>
+</li>
+<li>
+<p>using：简化上述流程</p>
+<pre><code>template &lt;typename Val&gt;
+using str_map_t = std::map&lt;std::string, Val&gt;;
+// ...
+str_map_t&lt;int&gt; map1;
+</code></pre>
+</li>
+</ol>
+<h1 id="左值与右值">左值与右值</h1>
+<h2 id="概念">概念</h2>
+<ol>
+<li>左值：可以在等号左面的值</li>
+<li>右值：（1）纯右值（2）将亡值：T&amp;&amp;和std::move</li>
+</ol>
+<p>注意：</p>
+<p>（1）++i是左值，i++是右值</p>
+<p>（2）字符串字面量是左值，认为是const char[N]</p>
+<p>（3）const T&amp;可以引用左值 or 右值</p>
+<p>（4）T&amp;&amp;可以引用std::move(左值)</p>
+<h2 id="移动语义">移动语义</h2>
+<p>可以理解为转移内存的所有权，对方不再拥有，可以<strong>节省拷贝的开销</strong>。</p>
+<p>【移动构造函数】</p>
+<pre><code>A(A&amp;&amp; a)
+{
+	this-&gt;data = a.data;
+    a.data = nullptr;
+    cout &lt;&lt; &quot;move ctor&quot; &lt;&lt; endl;
+}
+
+//使用
+A new_A = std::move(old_A);
+A new_A(std::move(old_A));
+</code></pre>
+<h2 id="完美转发">完美转发</h2>
+<p>使用函数模板实现为左值和右值转发到不同的函数</p>
+<p>（1）函数模板 + T&amp;&amp;：实现万能引用</p>
+<p>（2）<code>std::forward&lt;T&gt;(n)</code>：维持左右值属性，实现完美转发</p>
+<pre><code>template &lt;typename T&gt;
+void function(T&amp;&amp; t) {
+    otherdef(forward&lt;T&gt;(t));
+}
+</code></pre>
+<h2 id="返回值优化rvo">返回值优化(RVO)</h2>
+<p>函数需要返回一个对象实例时候，就会创建一个临时对象并通过复制构造函数将目标对象复制到临时对象，这里有复制构造函数和析构函数会被多余的调用到，有代价，而通过返回值优化，C++编译允许省略调用这些复制构造函数。</p>
+<h1 id="stdfunction-stdbind-lambda表达式">std::function &amp; std::bind &amp; lambda表达式</h1>
+<h2 id="1特殊函数类型">1.特殊函数类型</h2>
+<p>（1）仿函数：类中重载operator()后可以将类看做仿函数</p>
+<p>（2）匿名函数（lambda）：</p>
+<pre><code>[&amp;](int a)-&gt;int{return a+1;};
+</code></pre>
+<h2 id="2-函数指针">2. 函数指针</h2>
+<pre><code>typedef int(* PFUNC)(int, int); //别名：类型为int F(int, int);
+
+PFUNC p = A(int, int);//声明
+p(1,1);//调用
+</code></pre>
+<h2 id="3-stdfunction-stdbind">3. std::function &amp; std::bind</h2>
+<p>（1）function：函数包装器，使用模板实现不同函数的封装</p>
+<pre><code>std::function&lt;int(int)&gt; f1 = [&amp;](int a)-&gt;int //int f(int)类型包装器
+{
+	std::cout&lt;&lt;a&lt;&lt;std::endl;
+    return a;
+};
+</code></pre>
+<p>（2）bind：函数适配器，将不同参数列表的函数适配转换</p>
+<pre><code>class A{
+void my_fun(int a,int b);
+}
+
+auto f2 = std::bind(&amp;A::my_fun, &amp;a, 1, std::placeholders::_1); //f2:function&lt;void(int b)&gt;
+f2(2);//等价于&amp;A::my_fun(1, 2);
+</code></pre>
+<h2 id="4-回调函数">4. 回调函数</h2>
+<p>【实现信号与槽的机制】</p>
+<pre><code>class SignalObject{
+private:
+    function&lt;void(int)&gt; my_callfun; //函数接口
+public:
+    //注册槽函数
+    void regist(function&lt;void(int)&gt; slotfun){
+        my_callfun = slotfun;
+    }
+    //发射信号，满足条件回调函数
+    void emitsignal(int singalval){
+        my_callfun(singalval);
+    }
+};
+
+class SlotObject{
+public:
+    SlotObject(){}
+    void slotfunction(int singalval){
+        //cout&lt;&lt;this&lt;&lt;endl;
+        cout&lt;&lt;&quot;get singal:&quot;&lt;&lt;singalval&lt;&lt;endl;
+    }
+};
+
+int main(){
+    SignalObject singal;
+    SlotObject slot;
+
+    //step:注册回调函数
+    singal.regist(bind(&amp;SlotObject::slotfunction, &amp;slot, placeholders::_1));
+    //step2:信号发生，自动调用slot函数
+    singal.emitsignal(1);
+}
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#auto%E5%92%8Cdecltype">auto和decltype</a>
+<ul>
+<li><a href="#auto">auto</a>
+<ul>
+<li><a href="#autoconst">auto+const</a></li>
+<li><a href="#auto%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9">auto注意事项</a></li>
+</ul>
+</li>
+<li><a href="#decltype">decltype</a>
+<ul>
+<li><a href="#decltype%E5%AF%B9%E6%AF%94auto">decltype对比auto</a></li>
+<li><a href="#decltype%E6%8E%A8%E5%AF%BC%E8%A7%84%E5%88%99">decltype推导规则</a></li>
+</ul>
+</li>
+<li><a href="#%E8%BF%94%E5%9B%9E%E7%B1%BB%E5%9E%8B%E5%90%8E%E7%BD%AE">返回类型后置</a></li>
+</ul>
+</li>
+<li><a href="#using">using</a>
+<ul>
+<li><a href="#%E6%A8%A1%E6%9D%BF%E5%88%AB%E5%90%8D">模板别名</a></li>
+</ul>
+</li>
+<li><a href="#%E5%B7%A6%E5%80%BC%E4%B8%8E%E5%8F%B3%E5%80%BC">左值与右值</a>
+<ul>
+<li><a href="#%E6%A6%82%E5%BF%B5">概念</a></li>
+<li><a href="#%E7%A7%BB%E5%8A%A8%E8%AF%AD%E4%B9%89">移动语义</a></li>
+<li><a href="#%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91">完美转发</a></li>
+<li><a href="#%E8%BF%94%E5%9B%9E%E5%80%BC%E4%BC%98%E5%8C%96rvo">返回值优化(RVO)</a></li>
+</ul>
+</li>
+<li><a href="#stdfunction-stdbind-lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F">std::function &amp; std::bind &amp; lambda表达式</a>
+<ul>
+<li><a href="#1%E7%89%B9%E6%AE%8A%E5%87%BD%E6%95%B0%E7%B1%BB%E5%9E%8B">1.特殊函数类型</a></li>
+<li><a href="#2-%E5%87%BD%E6%95%B0%E6%8C%87%E9%92%88">2. 函数指针</a></li>
+<li><a href="#3-stdfunction-stdbind">3. std::function &amp; std::bind</a></li>
+<li><a href="#4-%E5%9B%9E%E8%B0%83%E5%87%BD%E6%95%B0">4. 回调函数</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://duan-shuai.github.io/post/cpp-ji-chu-pian-04-stl/">
+              <h3 class="post-title">
+                【cpp基础篇-04】STL
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://duan-shuai.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

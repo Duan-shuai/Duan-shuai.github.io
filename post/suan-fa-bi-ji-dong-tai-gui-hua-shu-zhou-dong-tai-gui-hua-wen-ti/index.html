@@ -1,0 +1,205 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>【算法笔记】动态规划--数轴动态规划问题 | 梦里飞雪飘</title>
+<link rel="shortcut icon" href="https://duan-shuai.github.io/favicon.ico?v=1677047621874">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://duan-shuai.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="【算法笔记】动态规划--数轴动态规划问题 | 梦里飞雪飘 - Atom Feed" href="https://duan-shuai.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="【01背包问题】
+
+1.如何用子问题表示
+P[1…n , C]表示总问题
+dp[ i ][ j ]表示P[ i…n，j ]的最大价值
+则总问题P[1…n , C] = max{ P[2…n , C - v1 ] , P[ 2…n , C] ..." />
+    <meta name="keywords" content="算法" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://duan-shuai.github.io">
+  <img class="avatar" src="https://duan-shuai.github.io/images/avatar.png?v=1677047621874" alt="">
+  </a>
+  <h1 class="site-title">
+    梦里飞雪飘
+  </h1>
+  <p class="site-description">
+    coding......
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              【算法笔记】动态规划--数轴动态规划问题
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-03-22
+              </span>
+              <span>
+                2 min read
+              </span>
+              
+                <a href="https://duan-shuai.github.io/tag/96Bx5rGp4/" class="post-tag">
+                  # 算法
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <h2 id="01背包问题"><strong>【01背包问题】</strong></h2>
+<figure data-type="image" tabindex="1"><img src="https://img2020.cnblogs.com/blog/2071899/202006/2071899-20200619194500674-1371760818.png" alt="img" loading="lazy"></figure>
+<p>1.如何用子问题表示</p>
+<p>P[1…n , C]表示总问题</p>
+<p>dp[ i ][ j ]表示P[ i…n，j ]的最大价值</p>
+<p>则总问题P[1…n , C] = max{ P[2…n , C - v1 ] , P[ 2…n , C] }</p>
+<p>\2. 优化子结构和重叠子问题</p>
+<p>\3. 递归表达式</p>
+<p><strong>dp[ i ][ j ] = max{ dp[ i + 1][ j - wi ] + vi , dp[ i + 1][ j ]}</strong>(选与不选)</p>
+<p>递归终点：dp[ n ] [ j ] = vn (j &gt; wn) ; dp[ n ][ j ] = 0(j &lt; wn)</p>
+<p>4.伪代码</p>
+<p>For j=0 To min(wn-1 , C)</p>
+<p>​      Do dp[ n ][ j ] = 0;</p>
+<p>For j=wn To C</p>
+<p>​      Do dp[ n ][ j ] = vn;</p>
+<p>For i = n-1 To 2</p>
+<p>​     Do For j = 0 To min(wi-1 , C)</p>
+<p>​           Do dp[ i ][ j ] = m[ i+1 ][ j ];</p>
+<p>​        For j = wi To C</p>
+<p>​           Do dp[ i ][ j ] = max{ dp[ i + 1][ j - wi ] + vi , dp[ i + 1][ j ]}</p>
+<p>if C &lt; w1</p>
+<p>Then dp[ 1 ][ C ] = dp[ 2 ][ C ]</p>
+<p>Else dp[ 1 ][ C ] = max{ dp[ 2 ][ C - w1 ] + v1 , dp[ 2 ][ C ] }</p>
+<h2 id="购物问题"><strong>【购物问题】</strong></h2>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#01%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98"><strong>【01背包问题】</strong></a></li>
+<li><a href="#%E8%B4%AD%E7%89%A9%E9%97%AE%E9%A2%98"><strong>【购物问题】</strong></a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://duan-shuai.github.io/post/suan-fa-bi-ji-dong-tai-gui-hua-hua-fen-dong-tai-gui-hua-wen-ti/">
+              <h3 class="post-title">
+                【算法笔记】动态规划--划分动态规划问题
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://duan-shuai.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

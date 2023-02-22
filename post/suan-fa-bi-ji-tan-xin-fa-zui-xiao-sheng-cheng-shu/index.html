@@ -1,0 +1,223 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>【算法笔记】贪心法--最小生成树 | 梦里飞雪飘</title>
+<link rel="shortcut icon" href="https://duan-shuai.github.io/favicon.ico?v=1677047621874">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://duan-shuai.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="【算法笔记】贪心法--最小生成树 | 梦里飞雪飘 - Atom Feed" href="https://duan-shuai.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="一.Kruskal算法
+思路：
+每次在图中选择一条最短的且不构成环的边，重复V-1次得到最小生成树
+注：不在一个集合表示不连通，保证了不会形成环
+伪代码实现
+
+时间复杂度分析
+边排序：O（ElogE）
+建立集合：O（V）
+查找集合与合并集合..." />
+    <meta name="keywords" content="算法" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://duan-shuai.github.io">
+  <img class="avatar" src="https://duan-shuai.github.io/images/avatar.png?v=1677047621874" alt="">
+  </a>
+  <h1 class="site-title">
+    梦里飞雪飘
+  </h1>
+  <p class="site-description">
+    coding......
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              【算法笔记】贪心法--最小生成树
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-03-02
+              </span>
+              <span>
+                2 min read
+              </span>
+              
+                <a href="https://duan-shuai.github.io/tag/96Bx5rGp4/" class="post-tag">
+                  # 算法
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <h2 id="一kruskal算法">一.Kruskal算法</h2>
+<h3 id="思路">思路：</h3>
+<p>每次在图中选择一条<strong>最短</strong>的且<strong>不构成环</strong>的边，重复V-1次得到最小生成树</p>
+<p>注：不在一个集合表示不连通，保证了不会形成环</p>
+<h3 id="伪代码实现">伪代码实现</h3>
+<figure data-type="image" tabindex="1"><img src="https://img2020.cnblogs.com/blog/2071899/202006/2071899-20200619153128414-1387351442.png" alt="img" loading="lazy"></figure>
+<h3 id="时间复杂度分析">时间复杂度分析</h3>
+<p>边排序：O（ElogE）</p>
+<p>建立集合：O（V）</p>
+<p>查找集合与合并集合O：O（（V+E）logV）</p>
+<p>时间复杂度：O（ElogE）</p>
+<h3 id="正确性证明">正确性证明 ：</h3>
+<p>优化子结构：设uv是G中权值最小的边，则必有一棵最 小生成树包含边uv.（反证法）</p>
+<p>贪心选择性：按照点的个数进行归纳证明</p>
+<h2 id="二prim算法">二.Prim算法</h2>
+<h3 id="思路-2">思路：</h3>
+<p>设置空图G',先将任意顶点加入G‘，每次将G与G’间最短的一条边和对应的顶点加入到G‘中，直到G中没有顶点</p>
+<h3 id="伪代码">伪代码</h3>
+<figure data-type="image" tabindex="2"><img src="https://img2020.cnblogs.com/blog/2071899/202006/2071899-20200619155749269-541909688.png" alt="img" loading="lazy"></figure>
+<h3 id="时间复杂度分析-2">时间复杂度分析：</h3>
+<p>O(VlogV+ElogV)=O(ElogV)--使用最小堆实现</p>
+<h3 id="正确性证明-2">正确性证明：</h3>
+<p>优化子结构： 设uv是G中与顶点u关联的权值最小的边， 则必有一棵最小生成树包含边uv.（反证法）</p>
+<p>贪心选择性：归纳证明即可</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E4%B8%80kruskal%E7%AE%97%E6%B3%95">一.Kruskal算法</a>
+<ul>
+<li><a href="#%E6%80%9D%E8%B7%AF">思路：</a></li>
+<li><a href="#%E4%BC%AA%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0">伪代码实现</a></li>
+<li><a href="#%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90">时间复杂度分析</a></li>
+<li><a href="#%E6%AD%A3%E7%A1%AE%E6%80%A7%E8%AF%81%E6%98%8E">正确性证明 ：</a></li>
+</ul>
+</li>
+<li><a href="#%E4%BA%8Cprim%E7%AE%97%E6%B3%95">二.Prim算法</a>
+<ul>
+<li><a href="#%E6%80%9D%E8%B7%AF-2">思路：</a></li>
+<li><a href="#%E4%BC%AA%E4%BB%A3%E7%A0%81">伪代码</a></li>
+<li><a href="#%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90-2">时间复杂度分析：</a></li>
+<li><a href="#%E6%AD%A3%E7%A1%AE%E6%80%A7%E8%AF%81%E6%98%8E-2">正确性证明：</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://duan-shuai.github.io/post/suan-fa-bi-ji-tan-xin-fa-jie-shao/">
+              <h3 class="post-title">
+                【算法笔记】贪心法--介绍
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://duan-shuai.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
